@@ -1,0 +1,6 @@
+font = "JetBrains Mono:size=12"
+padding = 10
+border-width = 2
+background-color = #1e1e2e
+text-color = #cdd6f4
+selection-color = #89b4fa

@@ -1,0 +1,10 @@
+# ~/.config/swaync/config.yml
+notify:
+  timeout: 5000    # 5 seconds
+  font: JetBrainsMono Nerd Font 10
+  position: top-right
+  max_width: 400
+  border: false
+bar:
+  enabled: false   # we don’t need a second bar
+

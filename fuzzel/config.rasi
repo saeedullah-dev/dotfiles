@@ -1,0 +1,12 @@
+* {
+    font: "JetBrainsMono Nerd Font 10";
+    normal-bg: #282828;
+    normal-fg: #ebdbb2;
+    selected-bg: #458588;
+    selected-fg: #fbf1c7;
+    border-color: #504945;
+    border-width: 1px;
+    padding: 6px;
+    margin: 2px;
+}
+

@@ -1,0 +1,192 @@
+#====================================================
+# SWAY CONFIG - ULTRA HIGH PERFORMANCE
+#====================================================
+
+#-----------------------------
+# VARIABLES
+#-----------------------------
+set $mod Mod1
+set $term alacritty
+set $menu rofi -show run
+set $appmenu rofi -show drun
+set $bin /home/saeedul/bin/sway
+set $font JetBrainsMono Nerd Font 10
+
+# Screenshot commands
+set $screenclip_copy "slurp | grim -g - - | wl-copy"
+set $screenclip_edit "slurp | grim -g - - | swappy -f -"
+set $screenclip_save "slurp | grim -g - /home/saeedul/Pictures/screenshots/$(date +%Y-%m-%d-%H-%M-%S).png"
+
+# Wayland optimizations
+exec_always export MOZ_ENABLE_WAYLAND=1
+exec_always export GDK_BACKEND=wayland
+exec_always export QT_QPA_PLATFORM=wayland
+
+#-----------------------------
+# WORKSPACES
+#-----------------------------
+set $ws1 1:1
+set $ws2 2:2
+set $ws3 3:3
+set $ws4 4:4
+set $ws5 5:5
+set $ws6 6:6
+set $ws7 7:7
+set $ws8 8:8
+set $ws9 9:9
+set $ws10 10:10
+
+workspace $ws1
+
+#-----------------------------
+# INPUT CONFIG - LOW LATENCY
+#-----------------------------
+input type:keyboard {
+    repeat_delay 180
+    repeat_rate 90
+    xkb_options "caps:escape"
+}
+
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+    accel_profile flat
+    pointer_accel 0.5
+}
+
+input 1267:51:Elan_TrackPoint {
+    scroll_button_lock enable
+}
+
+seat seat0 hide_cursor 2000
+
+#-----------------------------
+# OUTPUTS
+#-----------------------------
+output eDP-1 pos 0 0 res 1920x1080 scale 1.30
+output * background /home/saeedul/Downloads/hong.png fill
+font pango:$font
+
+#-----------------------------
+# BAR & NOTIFICATIONS
+#-----------------------------
+exec_always --no-startup-id pkill waybar; waybar &
+exec_always --no-startup-id pkill mako; mako --font "$font" --border-size 2 --margin 12 --max-visible 5
+
+#-----------------------------
+# SWAY BEHAVIOR
+#-----------------------------
+floating_modifier $mod
+popup_during_fullscreen leave_fullscreen
+focus_follows_mouse yes
+mouse_warping output
+hide_edge_borders smart
+smart_borders on
+smart_gaps on
+gaps inner 5
+
+default_border none
+default_floating_border none
+for_window [class="^.*"] border pixel 2
+
+#-----------------------------
+# STARTUP PROGRAMS
+#-----------------------------
+exec_always pkill kanshi; exec kanshi   # Dynamic monitor layouts
+exec nm-applet --indicator
+
+#-----------------------------
+# IDLE / LID MANAGEMENT (ULTRA)
+#-----------------------------
+# Single lock, GPU blur
+exec_always --no-startup-id swayidle -w \
+    timeout 30 "~/.config/sway/lock-wrapper.sh" \
+    timeout 330 'if ! pgrep -x mpv >/dev/null && ! playerctl status 2>/dev/null | grep -q Playing; then swaymsg "output * power off"; fi' \
+    timeout 601 'if ! pgrep -x mpv >/dev/null && ! playerctl status 2>/dev/null | grep -q Playing; then systemctl suspend; fi' \
+    lock-command "~/.config/sway/lock-wrapper.sh" \
+    resume 'swaymsg "output * power on"'
+
+# lock-wrapper.sh should call swaylock with GPU blur:
+# swaylock -f --screenshots --blur 10 --clock --indicator-radius 80 --effect-vignette 0.5 -c 000000
+
+#-----------------------------
+# KEY BINDINGS - APPS & SCREEN CAPTURE
+#-----------------------------
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec firefox
+bindsym $mod+slash exec $bin/touchpad toggle
+bindsym --release $mod+Print exec $screenclip_save
+bindsym --release $mod+Shift+Print exec $screenclip_copy
+bindsym --release $mod+Ctrl+Shift+Print exec $screenclip_edit
+
+#-----------------------------
+# WINDOW RULES
+#-----------------------------
+for_window [title="galculator"] floating enable
+for_window [class="Gnuplot"] floating enable
+for_window [title="Onboard"] border none
+for_window [app_id="zenity"] floating enable
+for_window [app_id="zoom"] floating enable
+for_window [title="qb-cookie-mgr"] floating enable
+for_window [title="Network Settings"] floating enable
+for_window [title="Network Connections"] floating enable
+
+#-----------------------------
+# BRIGHTNESS & VOLUME
+#-----------------------------
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +1%
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 1%-
+
+#-----------------------------
+# WINDOW MANAGEMENT
+#-----------------------------
+# Focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Move
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Layouts
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+
+# Floating toggle & focus mode
+bindsym $mod+Shift+f floating toggle
+bindsym $mod+p focus mode_toggle
+
+# Workspace switching
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# Quick switch
+bindsym $mod+Tab workspace back_and_forth
+
+# Reload / exit / lock
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -b 'Yes' 'swaymsg exit'
+bindsym $mod+BackSpace exec ~/.config/sway/lock-wrapper.sh
+
+#====================================================
+# END OF ULTRA HIGH PERFORMANCE CONFIG
+#====================================================
+

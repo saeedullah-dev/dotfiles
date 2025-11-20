@@ -1,0 +1,135 @@
+* {
+    border:        none;
+    border-radius: 0;
+    font-family:   "JetBrainsMono Nerd Font";
+    font-size:     14px;
+    box-shadow:    none;
+    text-shadow:   none;
+    min-height:    0;
+    padding:       0;
+    margin:        0;
+}
+
+window {
+    color:      rgba(217, 216, 216, 1);
+    background: rgba(43, 48, 59, 0.0);
+    padding:    0;
+    margin:     0;
+}
+
+/* --------------------------------------------------------------------------
+   DWM-STYLE WORKSPACES (same size as your original, but look like DWM)
+   -------------------------------------------------------------------------- */
+
+#workspaces {
+    margin: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 4px;                     /* SAME SIZE YOU HAD */
+    margin: 0 4px;
+
+    min-width: 0px;                      /* keep auto width */
+    min-height: 0px;
+
+    border: 2px solid rgba(217, 216, 216, 0.4);  /* DWM empty square border */
+    border-radius: 2px;                  /* set to 0 if you want sharp corners */
+
+    background: transparent;             /* empty box like DWM */
+    color: transparent;                  /* hide text inside boxes */
+}
+
+/* Empty but visible workspace */
+#workspaces button.visible {
+    border-color: rgba(217, 216, 216, 0.8);
+}
+
+/* Focused workspace → filled colored box (DWM behavior) */
+#workspaces button.focused {
+    background: rgba(0, 157, 220, 1);
+    border-color: rgba(0, 157, 220, 1);
+}
+
+/* Urgent workspace → filled red box */
+#workspaces button.urgent {
+    background: rgba(238, 46, 36, 1);
+    border-color: rgba(238, 46, 36, 1);
+}
+
+/* Optional hover */
+#workspaces button:hover {
+    background: rgba(217, 216, 216, 0.3);
+    border-color: rgba(217, 216, 216, 0.6);
+}
+
+/* -------------------------------------------------------------------------- */
+
+#mode, #battery, #cpu, #memory, #network, #pulseaudio, #backlight,
+#custom-storage, #custom-spotify, #custom-weather, #custom-mail {
+    margin:     0px 6px 0px 8px;
+    min-width:  20px;
+}
+
+#custom-touchbar {
+    color: #999999;
+}
+
+#custom-notifications {
+    color: #ffff00;
+}
+
+#cpu {
+    color: #fa6868;
+}
+
+#backlight {
+    color: #ffff00;
+}
+
+#memory {
+    color: #00fff2;
+}
+
+#network {
+    color: #268bd2;
+}
+
+#idle_inhibitor {
+    margin:     0px 6px 0px 1px;
+}
+
+#tray {
+    margin:     0px 1px 0px 20px;
+}
+
+#clock {
+    margin:     0px 8px 0px 16px;
+    min-width:  100px;
+}
+
+#pulseaudio {
+    color: #4BFA3C;
+}
+
+#battery {
+    color: #cccc00;
+}
+
+#battery.warning {
+   color: rgba(255, 210, 4, 1);
+}
+
+#battery.critical {
+    color: rgba(238, 46, 36, 1);
+}
+
+#custom-storage.warning {
+    color: rgba(255, 210, 4, 1);
+}
+
+#custom-storage.critical {
+    color: rgba(238, 46, 36, 1);
+}
+
+
+

@@ -1,0 +1,203 @@
+#------------------------------------------------------------------------
+# VARIABLES
+#------------------------------------------------------------------------
+set $mod Mod1
+set $bin /home/saeedul/bin/sway
+set $font JetBrainsMono Nerd Font 10
+set $term alacritty
+set $lock '~/.config/sway/lock-blur.sh'
+set $menu fuzzel
+set $appmenu rofi -show drun
+
+# Faster screenshot & copy (no subshells in pipeline unless necessary)
+set $screenclip_copy grim -g "$(slurp)" - | wl-copy
+set $screenclip_edit grim -g "$(slurp)" - | swappy -f -
+set $screenclip_save grim -g "$(slurp)" - /home/saeedul/Pictures/screenshots/$(date +"%Y-%m-%d-%H-%M-%S").png
+
+# Workspaces
+set $ws1 1:1
+set $ws2 2:2
+set $ws3 3:3
+set $ws4 4:4
+set $ws5 5:5
+set $ws6 6:6
+set $ws7 7:7
+set $ws8 8:8
+set $ws9 9:9
+set $ws10 10:10
+
+workspace $ws1
+
+#------------------------------------------------------------------------
+# INPUTS
+#------------------------------------------------------------------------
+input type:keyboard {
+    repeat_delay 180
+    repeat_rate 90
+    xkb_options "caps:escape"
+}
+
+input type:touchpad {
+    tap enabled
+    events disabled
+}
+
+input 1267:51:Elan_TrackPoint {
+    scroll_button_lock enable
+}
+
+seat seat0 hide_cursor 3000
+
+#------------------------------------------------------------------------
+# OUTPUTS
+#------------------------------------------------------------------------
+output eDP-1 {
+    pos 0 0
+    res 1920x1080
+    scale 1.3
+}
+
+font pango:$font
+
+
+#------------------------------------------------------------------------
+# SWAY BEHAVIOUR
+#------------------------------------------------------------------------
+floating_modifier $mod
+popup_during_fullscreen leave_fullscreen
+focus_follows_mouse yes
+mouse_warping output
+
+output * background /home/saeedul/Downloads/hong.png fill
+
+default_border none
+default_floating_border none
+for_window [class="^.*"] border pixel 2
+
+hide_edge_borders smart
+smart_borders on
+smart_gaps on
+gaps inner 5
+
+#------------------------------------------------------------------------
+# STARTUP PROGRAMS (optimized)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+# WAYBAR (optimized startup)
+#------------------------------------------------------------------------
+
+# Kill existing Waybar (if reloading Sway), then start a new one.
+# Using `--no-startup-id` prevents Sway from tracking it as a blocking process.
+
+#------------------------------------------------------------------------
+# WAYBAR (optimized startup)
+#------------------------------------------------------------------------
+
+# Kill existing Waybar (if reloading Sway), then start a new one.
+# Using `--no-startup-id` prevents Sway from tracking it as a blocking process.
+# Remove any `bar {}` block
+
+# Add:
+exec_always --no-startup-id pkill waybar; waybar &
+
+
+# Start only essential background services in parallel
+#exec_always mako --default-timeout 2500 --font "$font" &
+exec_always pkill swaync; sleep 1 && swaync &
+
+exec_always pkill kanshi; exec kanshi &
+exec nm-applet --indicator &
+
+# Idle / lock handling (merged for clarity, same timing)
+exec_always --no-startup-id swayidle -w \
+    timeout 30 '~/.config/sway/lock-blur.sh' \
+    timeout 330 'if ! pgrep -x mpv >/dev/null && ! playerctl status 2>/dev/null | grep -q Playing; then swaymsg "output * power off"; fi' \
+    timeout 600 'if ! pgrep -x mpv >/dev/null && ! playerctl status 2>/dev/null | grep -q Playing; then systemctl suspend; fi' \
+    resume 'swaymsg "output * power on"' \
+    before-sleep '~/.config/sway/lock-blur.sh'
+
+#------------------------------------------------------------------------
+# KEY BINDINGS
+#------------------------------------------------------------------------
+bindsym $mod+Return exec $term
+bindsym --release $mod+Shift+Print exec $screenclip_copy
+bindsym --release $mod+Ctrl+Shift+Print exec $screenclip_edit
+bindsym --release $mod+Print exec $screenclip_save
+
+bindsym $mod+q kill
+bindsym $mod+space exec $menu
+bindsym $mod+Shift+space exec $appmenu
+bindsym Control+Space exec makoctl dismiss --all
+
+# Workspace navigation
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+bindsym $mod+Tab workspace back_and_forth
+
+# Move windows between workspaces
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Movement and resizing
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+r mode "resize"
+bindsym $mod+m mode "move"
+
+# Layout and appearance
+bindsym $mod+f fullscreen
+bindsym $mod+Shift+f floating toggle
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+b exec swaymsg border toggle
+
+# Lock, reload, exit
+bindsym $mod+BackSpace exec $lock
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -b 'Yes' 'swaymsg exit'
+
+#------------------------------------------------------------------------
+# MODES
+#------------------------------------------------------------------------
+mode "resize" {
+    bindsym h resize shrink width 10 px or 5 ppt
+    bindsym j resize grow height 10 px or 5 ppt
+    bindsym k resize shrink height 10 px or 5 ppt
+    bindsym l resize grow width 10 px or 5 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+mode "move" {
+    bindsym h move container to output left, workspace back_and_forth
+    bindsym j move container to output up, workspace back_and_forth
+    bindsym k move container to output down, workspace back_and_forth
+    bindsym l move container to output right, workspace back_and_forth
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+

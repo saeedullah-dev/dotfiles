@@ -1,0 +1,253 @@
+#------------------------------------------------------------------------
+# VARIABLES
+#------------------------------------------------------------------------
+set $mod Mod1
+set $bin /home/saeedul/bin/sway
+set $font JetBrainsMono Nerd Font 10
+set $term alacritty
+set $menu rofi -show run
+set $appmenu rofi -show drun
+
+set $screenclip_copy slurp | grim -g - - | wl-copy
+set $screenclip_edit slurp | grim -g - - | swappy -f -
+set $screenclip_save slurp | grim -g - /home/saeedul/Pictures/screenshots/$(date +"%Y-%m-%d-%H-%M-%S").png
+bindsym Print exec grim ~/Pictures/screenshots/$(date +%Y-%m-%d-%H-%M-%S).png
+
+exec_always export MOZ_ENABLE_WAYLAND=1
+
+#------------------------------------------------------------------------
+# WORKSPACES
+#------------------------------------------------------------------------
+set $ws1  1:1
+set $ws2  2:2
+set $ws3  3:3
+set $ws4  4:4
+set $ws5  5:5
+set $ws6  6:6
+set $ws7  7:7
+set $ws8  8:8
+set $ws9  9:9
+set $ws10 10:10
+
+workspace $ws1
+
+#------------------------------------------------------------------------
+# INPUTS
+#------------------------------------------------------------------------
+input type:keyboard {
+    repeat_delay 180
+    xkb_options "caps:escape"
+    repeat_rate 90
+}
+
+input type:touchpad {
+    tap enabled
+    events disabled
+}
+
+input 1267:51:Elan_TrackPoint {
+    scroll_button_lock enable
+}
+
+seat seat0 hide_cursor 3000
+
+#------------------------------------------------------------------------
+# OUTPUTS
+#------------------------------------------------------------------------
+output eDP-1 pos 0 0 res 1920x1080 scale 1.30
+font pango:$font
+
+output * background /home/saeedul/Downloads/hong.png fill
+
+#------------------------------------------------------------------------
+# BAR
+#------------------------------------------------------------------------
+exec_always --no-startup-id pkill waybar; waybar &
+
+#------------------------------------------------------------------------
+# SWAY BEHAVIOUR
+#------------------------------------------------------------------------
+floating_modifier $mod
+popup_during_fullscreen leave_fullscreen
+focus_follows_mouse yes
+mouse_warping output
+hide_edge_borders smart
+smart_borders on
+smart_gaps on
+gaps inner 5
+
+default_border none
+default_floating_border none 
+for_window [class="^.*"] border pixel 2
+
+#------------------------------------------------------------------------
+# PROGRAMS TO RUN AT STARTUP
+#------------------------------------------------------------------------
+exec mako --default-timeout 2500 --font "$font"
+exec_always pkill kanshi; exec kanshi
+exec nm-applet --indicator
+
+#------------------------------------------------------------------------
+# LID CLOSE / IDLE MANAGEMENT FIXED
+#------------------------------------------------------------------------
+exec_always --no-startup-id swayidle -w \
+    timeout 30 '~/.config/sway/lock-wrapper.sh' \
+    lock-command '~/.config/sway/lock-wrapper.sh' \
+    timeout 330 'if ! pgrep -x mpv >/dev/null && ! playerctl status 2>/dev/null | grep -q Playing; then swaymsg "output * power off"; fi' \
+    timeout 601 'if ! pgrep -x mpv >/dev/null && ! playerctl status 2>/dev/null | grep -q Playing; then systemctl suspend; fi' \
+    resume '~/.config/sway/lock-wrapper.sh && swaymsg "output * power on"' \
+    before-sleep '~/.config/sway/lock-wrapper.sh'
+
+#------------------------------------------------------------------------
+# KEY BINDINGS - APPS & SCREENCAP
+#------------------------------------------------------------------------
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec firefox
+bindsym $mod+slash exec $bin/touchpad toggle
+bindsym --release $mod+Print exec $screenclip_save
+bindsym --release $mod+Shift+Print exec $screenclip_copy
+bindsym --release $mod+Ctrl+Shift+Print exec $screenclip_edit
+
+#------------------------------------------------------------------------
+# DEFAULT WINDOW RULES
+#------------------------------------------------------------------------
+for_window [title="galculator"] floating enable
+for_window [class="Gnuplot"] floating enable
+for_window [title="Onboard"] border none
+for_window [app_id="zenity"] floating enable
+for_window [app_id="zoom"] floating enable
+for_window [title="qb-cookie-mgr"] floating enable
+for_window [title="Network Settings"] floating enable
+for_window [title="Network Connections"] floating enable
+
+#------------------------------------------------------------------------
+# BRIGHTNESS & VOLUME KEYS
+#------------------------------------------------------------------------
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +1%
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 1%-
+
+#------------------------------------------------------------------------
+# MISC KEY BINDINGS
+#------------------------------------------------------------------------
+bindsym --locked $mod+Ctrl+Alt+backslash exec swaymsg output eDP-1 enable
+bindsym --locked $mod+Shift+s exec systemctl hibernate
+bindsym --locked $mod+n exec $HOME/bin/notify -d
+
+#------------------------------------------------------------------------
+# SWAY WINDOW MANAGEMENT KEYS
+#------------------------------------------------------------------------
+bindsym $mod+q kill
+bindsym $mod+space exec $menu
+bindsym $mod+Shift+space exec $appmenu
+bindsym Control+Space exec makoctl dismiss --all
+bindsym $mod+Shift+apostrophe move scratchpad
+bindsym $mod+apostrophe scratchpad show
+
+# Focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Move
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Splits
+bindsym $mod+bar split h
+bindsym $mod+minus split v
+
+# Fullscreen
+bindsym $mod+f fullscreen
+
+# Opacity
+bindsym $mod+comma swaymsg opacity minus 0.1
+bindsym $mod+period swaymsg opacity plus 0.1
+
+# Layouts
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+
+# Floating toggle & focus mode
+bindsym $mod+Shift+f floating toggle
+bindsym $mod+p focus mode_toggle
+
+# Parent/child focus
+bindsym $mod+a focus parent
+bindsym $mod+c focus child
+
+# Border toggle
+bindsym $mod+b exec swaymsg border toggle
+
+# Workspace switch
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# Move container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Quick toggle between workspaces
+bindsym $mod+Tab workspace back_and_forth
+
+# Window switch & layout scripts
+bindsym $mod+w exec $bin/window-switch
+bindsym $mod+y exec $bin/sway_layout.py menu
+bindsym $mod+equal exec $bin/free-workspace switch next
+bindsym $mod+plus exec $bin/free-workspace move next
+
+# Reload/exit/lock
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Are you sure you want to exit?' -b 'Yes, exit' 'swaymsg exit'
+bindsym $mod+BackSpace exec ~/.config/sway/lock-wrapper.sh
+
+#------------------------------------------------------------------------
+# OTHER MODES
+#------------------------------------------------------------------------
+mode "resize" {
+    bindsym h resize shrink width 10 px or 5 ppt
+    bindsym j resize grow height 10 px or 5 ppt
+    bindsym k resize shrink height 10 px or 5 ppt
+    bindsym l resize grow width 10 px or 5 ppt
+    bindsym Left resize shrink width 10 px or 5 ppt
+    bindsym Down resize grow height 10 px or 5 ppt
+    bindsym Up resize shrink height 10 px or 5 ppt
+    bindsym Right resize grow width 10 px or 5 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+mode "move" {
+    bindsym h move container to output left, workspace back_and_forth
+    bindsym j move container to output up, workspace back_and_forth
+    bindsym k move container to output down, workspace back_and_forth
+    bindsym l move container to output right, workspace back_and_forth
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+m mode "move"
+
