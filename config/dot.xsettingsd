@@ -1,0 +1,7 @@
+Net/ThemeName "Nordic"
+Net/IconThemeName "Colloid-Dark"
+Gtk/FontName "Sans 10"
+Gtk/CursorThemeName "Adwaita"
+Xft/Antialias 1
+Xft/Hinting 1
+Xft/HintStyle "hintfull"

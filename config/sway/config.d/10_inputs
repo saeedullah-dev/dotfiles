@@ -1,0 +1,22 @@
+#==============================================================================
+# 10_inputs - KEYBOARD, MOUSE & TRACKPOINT
+#==============================================================================
+
+# Keyboard config - fast repeat & Caps Lock mapped to Escape
+input type:keyboard {
+    repeat_delay 180
+    repeat_rate 90
+    xkb_options "caps:escape"
+}
+
+# TrackPoint configuration - precise and smooth
+input 1267:51:Elan_TrackPoint {
+    scroll_button_lock enable
+    accel_profile flat
+    pointer_accel 0
+}
+
+# Hide cursor after idle for clean look
+seat seat0 {
+    hide_cursor 3000
+}

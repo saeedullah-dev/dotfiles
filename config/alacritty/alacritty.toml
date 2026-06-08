@@ -1,0 +1,42 @@
+general.import = [
+  "~/.config/alacritty/gruvbox_dark.toml"
+]
+
+    [window]
+    opacity = 0.0 # Sets the background opacity to 90%
+
+[cursor]
+blink_interval = 500
+[cursor.style]
+shape = "Block"
+blinking = "Always"
+
+
+
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 15.0
+
+[font.bold]
+# family = "MesloLGS Nerd Font Mono"
+family = "JetBrainsMono"
+style = "Bold"
+
+[font.bold_italic]
+family = "JetBrainsMono"
+# family = "MesloLGS Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "JetBrainsMono"
+# family = "MesloLGS Nerd Font Mono"
+style = "Italic"
+
+[font.normal]
+# family = "MesloLGS Nerd Font Mono"
+family = "JetBrainsMono"
+style = "Regular"
+

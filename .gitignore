@@ -1,0 +1,15 @@
+# Ignore any backup files created during restore
+*.bak.*
+*.bak
+
+# Ignore local system logs
+*.log
+
+# Ignore temporary/cache files
+.cache/
+tmp/
+/tmp/
+
+# OS-specific files
+.DS_Store
+Thumbs.db

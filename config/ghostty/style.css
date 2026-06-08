@@ -1,0 +1,24 @@
+/* GitHub Dark tab bar - matching wezterm */
+headerbar {
+    background: #0d1117;
+    border-bottom: 1px solid #2f363d;
+}
+
+tabbar tab {
+    background: #0d1117;
+    color: #8b949e;
+    border: none;
+    padding: 8px 20px;
+    margin: 2px 1px;
+}
+
+tabbar tab:selected {
+    background: #539bf5;
+    color: #0d1117;
+    font-weight: bold;
+}
+
+tabbar tab:hover:not(:selected) {
+    background: #21262d;
+    color: #58a6ff;
+}

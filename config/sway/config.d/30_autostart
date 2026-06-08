@@ -1,0 +1,21 @@
+#==============================================================================
+# 30_autostart - BACKGROUND SERVICES & UTILITIES
+#==============================================================================
+
+# Core services
+exec_always --no-startup-id pkill swaync; swaync &
+exec_always --no-startup-id pkill kanshi; kanshi &
+exec_always --no-startup-id pkill waybar; waybar &
+exec_always --no-startup-id nm-applet --indicator &
+
+# Additional utilities
+exec --no-startup-id autotiling -w 1 3 5 7 9
+exec --no-startup-id $sway_scripts/sunset.sh "on"
+exec --no-startup-id swaykbdd
+exec_always --no-startup-id pkill swayosd-server; swayosd-server &
+exec_always --no-startup-id wl-paste --watch cliphist store
+exec_always --no-startup-id wl-paste --watch pkill -U $USER -x -RTMIN+9 waybar
+
+# Rofi dynamic wallpaper theme matching
+exec_always --no-startup-id /home/saeedul/.config/rofi/generate_theme.py
+

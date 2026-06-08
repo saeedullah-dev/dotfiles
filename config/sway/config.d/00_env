@@ -1,0 +1,44 @@
+#==============================================================================
+# 00_env - ENVIRONMENT, PATHS, COLORS & FONTS
+#==============================================================================
+
+# DBus & Systemd Environment
+exec ~/.config/sway/scripts/portal.sh
+
+
+# DPI Scaling
+exec_always xrdb -merge <<< "Xft.dpi: 108"
+exec_always gsettings set org.gnome.desktop.interface text-scaling-factor 1.125
+
+# Enable XWayland
+xwayland enable
+
+# User Variables
+set $mod Mod1
+set $term alacritty
+set $font JetBrainsMono 11
+set $bin /home/saeedul/bin/sway
+set $wallpaper ~/.config/sway/wallpaper.png
+set $screenshots /home/saeedul/Pictures/screenshots
+set $lock ~/.config/sway/lock-wrapper.sh
+set $menu rofi -show run
+set $appmenu rofi -show drun
+set $sway_scripts $HOME/.config/sway/scripts
+set $clipboard '[ -x "$(command -v cliphist)" ] && cliphist list | wofi --dmenu | cliphist decode | wl-copy'
+
+# Wayland Environment Variables (Defined in ~/.profile for global session access)
+
+# Gruvbox Dark Palette
+set $bg      #282828
+set $fg      #ebdbb2
+set $black   #1d2021
+set $red     #cc241d
+set $green   #98971a
+set $yellow  #d79921
+set $blue    #458588
+set $purple  #b16286
+set $aqua    #689d6a
+set $gray    #a89984
+
+# Global font
+font pango:$font

@@ -1,0 +1,111 @@
+#==============================================================================
+# 40_keybindings - WORKSPACES, LAYOUTS & HOTKEYS
+#==============================================================================
+
+# Workspace Names
+set $ws1 1:1
+set $ws2 2:2
+set $ws3 3:3
+set $ws4 4:4
+set $ws5 5:5
+set $ws6 6:6
+set $ws7 7:7
+set $ws8 8:8
+set $ws9 9:9
+set $ws10 10:10
+workspace $ws1
+
+# Window Dragging / Focus
+floating_modifier $mod
+focus_follows_mouse yes
+mouse_warping output
+
+# Applications
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec firefox
+bindsym $mod+space exec $menu
+bindsym $mod+Shift+space exec $appmenu
+bindsym $mod+slash exec $bin/touchpad toggle
+bindsym $mod+Shift+p exec $clipboard
+
+# Screenshots
+bindsym --release Print exec grim $screenshots/$(date +'%Y-%m-%d-%H-%M-%S').png
+bindsym --release $mod+Print exec slurp | grim -g - - | wl-copy
+bindsym --release $mod+Shift+Print exec slurp | grim -g - - | swappy -f -
+
+# Volume / Brightness (using SwayOSD overlays)
+bindsym --locked XF86AudioRaiseVolume exec swayosd-client --output-volume 5
+bindsym --locked XF86AudioLowerVolume exec swayosd-client --output-volume -5
+bindsym --locked XF86AudioMute exec swayosd-client --output-volume mute-toggle
+bindsym --locked XF86MonBrightnessUp exec swayosd-client --brightness +2
+bindsym --locked XF86MonBrightnessDown exec swayosd-client --brightness -2
+bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+# System Controls
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec nwg-bar -x
+bindsym $mod+BackSpace exec $lock
+bindsym $mod+Shift+s exec systemctl hibernate
+
+# Workspace Helpers (First Empty Workspace)
+bindsym $mod+n exec $sway_scripts/first-empty-workspace.py --switch
+bindsym $mod+Shift+n exec $sway_scripts/first-empty-workspace.py --move
+bindsym $mod+Shift+m exec $sway_scripts/first-empty-workspace.py --move --switch
+
+# Window management
+bindsym $mod+q kill
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+f fullscreen
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+f floating toggle
+bindsym $mod+p focus mode_toggle
+bindsym $mod+a focus parent
+bindsym $mod+c focus child
+bindsym $mod+b exec swaymsg border toggle
+
+# Workspace switching / moving
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+bindsym $mod+Tab workspace back_and_forth
+
+# Scratchpad
+bindsym $mod+Shift+apostrophe move scratchpad
+bindsym $mod+apostrophe scratchpad show
+
+# Resize mode
+mode "resize" {
+    bindsym h resize shrink width 10 px or 5 ppt
+    bindsym j resize grow height 10 px or 5 ppt
+    bindsym k resize shrink height 10 px or 5 ppt
+    bindsym l resize grow width 10 px or 5 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"

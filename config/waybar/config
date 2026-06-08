@@ -1,0 +1,99 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 24,
+    "spacing": 2,
+
+    "modules-left": ["sway/workspaces", "sway/window"],
+    "modules-center": [],
+    "modules-right": ["cpu", "memory", "pulseaudio", "network", "network#wwan0", "battery", "clock", "tray"],
+
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}"
+    },
+
+    "sway/window": {
+        "max-length": 85,
+        "tooltip": false
+    },
+
+    "tray": {
+        "spacing": 8
+    },
+
+    "clock": {
+        "interval": 1,
+        "format": "{:%A, %B %d | %I:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%I:%M}"
+    },
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}  {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-plugged": "  {capacity}%",
+        "format-alt": "{icon}  {time}",
+        "format-icons": ["", "", "", "", ""]
+    },
+
+    "network": {
+        "interface": "wlp0s20f3",
+        "interval": 1,
+        "format-wifi": "  {essid} {bandwidthDownBytes}",
+        "format-ethernet": "  Modem {bandwidthDownBytes}",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-linked": "",
+        "format-disconnected": "",
+        "format-disabled": "",
+        "format-alt": "  {ifname}: {essid} ({ipaddr}) {bandwidthDownBytes}",
+        "on-click": "connman-gtk"
+    },
+
+    "network#wwan0": {
+        "interface": "wwan0",
+        "interval": 1,
+        "format": "  Telenor {bandwidthDownBytes}",
+        "format-disconnected": "",
+        "format-disabled": "",
+        "format-linked": "",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-alt": "  Telenor ({ipaddr}) {bandwidthDownBytes}"
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-bluetooth": "{icon}  {volume}% ",
+        "format-bluetooth-muted": "<span font='17px'>󰝟</span> {icon} {format_source}",
+        "format-muted": "<span font='17px'>󰝟</span> {format_source}",
+        "format-source": "  {volume}%",
+        "format-source-muted": "",
+        "format-icons": {
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    "backlight": {
+        "format": "{icon}  {percent}%",
+        "format-icons": [""],
+        "on-scroll-up": "swayosd-client --brightness +5",
+        "on-scroll-down": "swayosd-client --brightness -5"
+    },
+
+    "cpu": {
+        "format": "  {usage}%",
+        "interval": 1,
+        "tooltip": false
+    },
+
+    "memory": {
+        "format": "  {percentage}%",
+        "interval": 1
+    }
+}
