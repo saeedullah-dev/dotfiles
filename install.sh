@@ -373,6 +373,17 @@ else
     warn "TrackPoint scroll/click mapper service files not found, skipping."
 fi
 
+# 10. Restore modem sleep wakeup script (iosm-resume)
+IOSM_RESUME_SRC="$SCRIPT_DIR/iosm-resume"
+if [ -f "$IOSM_RESUME_SRC" ]; then
+    msg "Restoring iosm-resume sleep script..."
+    sudo cp "$IOSM_RESUME_SRC" /lib/systemd/system-sleep/iosm-resume
+    sudo chmod +x /lib/systemd/system-sleep/iosm-resume
+    success "Modem sleep/resume hook script restored successfully."
+else
+    warn "Modem sleep/resume hook script (iosm-resume) not found, skipping."
+fi
+
 # Enable core system services
 msg "Enabling background services..."
 sudo systemctl enable avahi-daemon acpid || true

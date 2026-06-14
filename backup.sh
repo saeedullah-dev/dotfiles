@@ -136,6 +136,12 @@ if [ -f "/etc/systemd/system/trackpoint-scroll.service" ]; then
     cp "/etc/systemd/system/trackpoint-scroll.service" "$DOTFILES_DIR/trackpoint-scroll.service"
 fi
 
+# Backup modem sleep wakeup script (iosm-resume)
+if [ -f "/lib/systemd/system-sleep/iosm-resume" ]; then
+    echo "Backing up modem sleep/resume script..."
+    cp "/lib/systemd/system-sleep/iosm-resume" "$DOTFILES_DIR/iosm-resume"
+fi
+
 # Export list of manually installed packages
 if command -v apt-mark &>/dev/null; then
     echo "Exporting list of manually installed APT packages..."

@@ -1,0 +1,16 @@
+#!/bin/sh
+# Systemd sleep script to reload iosm (Intel XMM7360 LTE modem) driver on sleep/resume.
+
+case "$1" in
+    pre)
+        logger "iosm-sleep: stopping ModemManager and unloading iosm module"
+        systemctl stop ModemManager
+        modprobe -r iosm
+        ;;
+    post)
+        logger "iosm-sleep: loading iosm module and starting ModemManager"
+        modprobe iosm
+        sleep 3
+        systemctl start ModemManager
+        ;;
+esac
