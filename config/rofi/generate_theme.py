@@ -177,7 +177,6 @@ def main():
         f.write("}\n")
         
     print(f"Saved wallpaper colors to {colors_file}")
-
     # Generate wallpaper.rasi (layout file that imports colors)
     layout_file = os.path.join(rofi_dir, "wallpaper.rasi")
     layout_content = """@import "/home/saeedul/.config/rofi/wallpaper-colors.rasi"

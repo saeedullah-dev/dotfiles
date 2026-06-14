@@ -84,6 +84,7 @@ button:hover {
 #temperature,
 #backlight,
 #network,
+#bluetooth,
 #pulseaudio,
 #wireplumber,
 #custom-media,
@@ -106,6 +107,7 @@ button:hover {
 #battery:hover,
 #network:hover,
 #network.wwan0:hover,
+#bluetooth:hover,
 #pulseaudio:hover,
 #tray:hover,
 #cpu:hover,
@@ -187,4 +189,7 @@ button:hover {
   color: rgba(255, 255, 255, 0.5);
 }
 
-
+#bluetooth.disabled,
+#bluetooth.off {
+  color: #e74c3c; /* Flat red when disabled */
+}

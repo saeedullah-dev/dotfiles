@@ -3,7 +3,7 @@ general.import = [
 ]
 
     [window]
-    opacity = 0.0 # Sets the background opacity to 90%
+    opacity = 0.5 # Sets the background opacity to 90%
 
 [cursor]
 blink_interval = 500

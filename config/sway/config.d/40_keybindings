@@ -37,8 +37,8 @@ bindsym --release $mod+Shift+Print exec slurp | grim -g - - | swappy -f -
 bindsym --locked XF86AudioRaiseVolume exec swayosd-client --output-volume 5
 bindsym --locked XF86AudioLowerVolume exec swayosd-client --output-volume -5
 bindsym --locked XF86AudioMute exec swayosd-client --output-volume mute-toggle
-bindsym --locked XF86MonBrightnessUp exec swayosd-client --brightness +2
-bindsym --locked XF86MonBrightnessDown exec swayosd-client --brightness -2
+bindsym --locked XF86MonBrightnessUp exec swayosd-client --brightness +5
+bindsym --locked XF86MonBrightnessDown exec swayosd-client --brightness -5
 bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # System Controls
@@ -62,6 +62,16 @@ bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
+
+# Arrow key navigation
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
 bindsym $mod+f fullscreen
 bindsym $mod+s layout stacking
 bindsym $mod+t layout tabbed
@@ -109,3 +119,8 @@ mode "resize" {
     bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
+
+# Lid switch bindings (15 second delay lock)
+bindswitch --locked lid:on exec ~/.config/sway/scripts/lid-handler.sh close
+bindswitch --locked lid:off exec ~/.config/sway/scripts/lid-handler.sh open
+

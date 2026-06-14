@@ -90,6 +90,8 @@ PACKAGES=(
     python3
     python3-i3ipc
     python3-requests
+    python3-pil
+    python3-evdev
     
     # UI Customizations
     nwg-look
@@ -146,6 +148,32 @@ PACKAGES=(
 
 msg "Installing system packages (this might take a few minutes)..."
 sudo apt-get install -y "${PACKAGES[@]}"
+
+# Restore additional manually installed packages if apt_packages.txt exists
+if [ -f "$SCRIPT_DIR/apt_packages.txt" ]; then
+    msg "Found apt_packages.txt. Restoring additional manual packages..."
+    EXTRA_PACKAGES=()
+    while IFS= read -r pkg || [ -n "$pkg" ]; do
+        # Ignore comments or empty lines
+        [[ -z "$pkg" || "$pkg" =~ ^# ]] && continue
+        # Avoid installing duplicates
+        if [[ ! " ${PACKAGES[@]} " =~ " ${pkg} " ]]; then
+            EXTRA_PACKAGES+=("$pkg")
+        fi
+    done < "$SCRIPT_DIR/apt_packages.txt"
+    
+    if [ ${#EXTRA_PACKAGES[@]} -gt 0 ]; then
+        msg "Attempting to install all additional packages at once..."
+        if ! sudo apt-get install -y "${EXTRA_PACKAGES[@]}"; then
+            warn "Bulk installation of additional packages failed. Retrying packages individually..."
+            for pkg in "${EXTRA_PACKAGES[@]}"; do
+                msg "Installing $pkg..."
+                sudo apt-get install -y "$pkg" || warn "Could not install package: $pkg"
+            done
+        fi
+    fi
+fi
+
 success "All system packages installed successfully."
 
 # 3. Download & Install Nerd Fonts (referenced by ghostty/sway/waybar configs)
@@ -286,6 +314,21 @@ for file in "${HOME_FILES[@]}"; do
     fi
 done
 
+# Restore swaylock PAM configuration
+PAM_SRC="$CONFIG_SOURCE_DIR/swaylock.pam"
+if [ -f "$PAM_SRC" ]; then
+    msg "Restoring swaylock PAM config..."
+    sudo cp "$PAM_SRC" /etc/pam.d/swaylock
+    sudo chmod 644 /etc/pam.d/swaylock
+fi
+
+# Restore modem steps file
+MODEM_SRC="$SCRIPT_DIR/stepForModem.txt"
+if [ -f "$MODEM_SRC" ]; then
+    msg "Restoring ~/stepForModem.txt..."
+    cp "$MODEM_SRC" "$HOME/stepForModem.txt"
+fi
+
 # 7. Symlink setup for apps requiring default configurations
 msg "Creating application symlinks..."
 ln -sf ~/.config/sway/gtklock ~/.config/gtklock
@@ -298,6 +341,37 @@ xdg-user-dirs-update
 mkdir -p "$HOME/Pictures/screenshots"
 mkdir -p "$HOME/Videos"
 success "User directories set up."
+
+# 9. Restore custom TrackPoint scroll/click mapper service
+TRACKPOINT_SERVICE_SRC="$SCRIPT_DIR/trackpoint-scroll.service"
+if [ -f "$TRACKPOINT_SERVICE_SRC" ] && [ -f "$SCRIPT_DIR/trackpoint_space_scroll.py" ]; then
+    msg "Restoring TrackPoint scroll/click service..."
+    # Copy script to $HOME
+    cp "$SCRIPT_DIR/trackpoint_space_scroll.py" "$HOME/trackpoint_space_scroll.py"
+    chmod +x "$HOME/trackpoint_space_scroll.py"
+    
+    # Copy service file to a temporary location, update path if username/home is different, and copy to /etc/systemd/system/
+    # We replace /home/saeedul with actual $HOME path
+    sed "s|/home/saeedul|$HOME|g" "$TRACKPOINT_SERVICE_SRC" > "$TEMP_DIR/trackpoint-scroll.service"
+    sudo cp "$TEMP_DIR/trackpoint-scroll.service" /etc/systemd/system/trackpoint-scroll.service
+    sudo chmod 644 /etc/systemd/system/trackpoint-scroll.service
+    
+    # Disable keyd service if running to avoid conflicts
+    if systemctl is-active --quiet keyd 2>/dev/null || systemctl is-enabled --quiet keyd 2>/dev/null; then
+        msg "Disabling conflicting keyd service..."
+        sudo systemctl stop keyd || true
+        sudo systemctl disable keyd || true
+    fi
+    
+    # Enable and start trackpoint-scroll service
+    msg "Enabling and starting trackpoint-scroll service..."
+    sudo systemctl daemon-reload
+    sudo systemctl enable trackpoint-scroll.service
+    sudo systemctl start trackpoint-scroll.service
+    success "TrackPoint scroll/click mapper service setup complete."
+else
+    warn "TrackPoint scroll/click mapper service files not found, skipping."
+fi
 
 # Enable core system services
 msg "Enabling background services..."

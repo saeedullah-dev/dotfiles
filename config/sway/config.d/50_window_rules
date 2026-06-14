@@ -47,3 +47,12 @@ for_window [title="Choose an Application"] floating enable
 
 # Notifications (SwayNC)
 exec_always --no-startup-id swaync-client --hide-on-startup
+
+# Inhibit idle when window is fullscreen
+for_window [class=".*"] inhibit_idle fullscreen
+for_window [app_id=".*"] inhibit_idle fullscreen
+
+# Set opacity for Zed editor
+for_window [app_id="dev.zed.Zed"] opacity set 0.80
+for_window [app_id="dev.zed.Zed" floating] opacity set 1.0
+

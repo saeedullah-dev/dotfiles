@@ -9,11 +9,20 @@ input type:keyboard {
     xkb_options "caps:escape"
 }
 
-# TrackPoint configuration - precise and smooth
-input 1267:51:Elan_TrackPoint {
-    scroll_button_lock enable
+# Disable Touch Screen
+input type:touch {
+    events disabled
+}
+
+# TrackPoint and Virtual Mouse configuration - fast, flat, and precise
+input 2:10:TPPS/2_Elan_TrackPoint {
     accel_profile flat
-    pointer_accel 0
+    pointer_accel 1.0
+}
+
+input 1:1:Virtual_Scroll_Mouse {
+    accel_profile flat
+    pointer_accel 1.0
 }
 
 # Hide cursor after idle for clean look

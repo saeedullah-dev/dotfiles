@@ -6,15 +6,19 @@ if pgrep -x "swaylock" > /dev/null; then
     exit 0
 fi
 
-# Paths for screenshots
+LOG_FILE="/tmp/swaylock.log"
+echo "=== Lock attempt at $(date) ===" > "$LOG_FILE"
+
 IMAGE="/tmp/swaylock_screen.png"
 BLURRED_IMAGE="/tmp/swaylock_blur.png"
 
-# Take a screenshot of the current workspace
-grim "$IMAGE"
+# Take screenshot in PNG format (since JPEG is disabled in your grim build)
+grim "$IMAGE" >> "$LOG_FILE" 2>&1
+echo "grim exit code: $?" >> "$LOG_FILE"
 
-# Fast and beautiful glassmorphic blur via ffmpeg (downscale, blur, upscale)
-ffmpeg -y -i "$IMAGE" -vf "scale=iw/4:-1,gblur=sigma=5,scale=4*iw:-1" "$BLURRED_IMAGE" 2>/dev/null
+# Super-fast smooth blur using downscaling, boxblur, and zero PNG compression (takes ~0.4s)
+ffmpeg -y -i "$IMAGE" -vf "scale=iw/8:-1,boxblur=5:2,scale=8*iw:-1" -compression_level 0 "$BLURRED_IMAGE" >> "$LOG_FILE" 2>&1
+echo "ffmpeg exit code: $?" >> "$LOG_FILE"
 
 # Clean up raw screenshot immediately
 rm -f "$IMAGE"
@@ -41,9 +45,9 @@ swaylock \
     --text-wrong-color ebdbb2 \
     --text-clear-color ebdbb2 \
     --indicator-radius 100 \
-    --indicator-thickness 7
+    --indicator-thickness 7 >> "$LOG_FILE" 2>&1
+
+echo "swaylock exit code: $?" >> "$LOG_FILE"
 
 # Clean up blurred image on unlock
 rm -f "$BLURRED_IMAGE"
-
-

@@ -1,0 +1,16 @@
+   9  sudo modem-manager.mmcli -L
+   10  nmcli -L
+   11  mmcli -L
+   12  [200~mmcli -m 0 --enable
+   13  ~mmcli -m 0 --enable
+   14  mmcli -m 0 --enable
+   15  sudo apt install -y socat minicom
+   16  mmcli -m 0
+   17  echo 'at@nvm:fix_cat_fcclock.fcclock_mode=0' | sudo socat - /dev/wwan0at0,crnl
+   18  echo 'at@store_nvm(fix_cat_fcclock)' | sudo socat - /dev/wwan0at0,crnl
+   19  echo 'AT+CFUN=15' | sudo socat - /dev/wwan0at0,crnl
+   20  mmcli -m 0 --enable
+   21  reboot
+   22  history
+saeedul@BinTore:~$ 
+

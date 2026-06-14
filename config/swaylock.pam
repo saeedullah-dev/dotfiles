@@ -1,0 +1,8 @@
+ # Try password authentication first
+    auth sufficient pam_unix.so try_first_pass nullok
+
+    # Fallback to fingerprint if password is empty
+    auth sufficient pam_fprintd.so
+
+    # Standard authentication fallback
+    auth include login

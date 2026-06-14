@@ -109,6 +109,39 @@ else
     echo "Warning: Wallpaper '$WALLPAPER_SRC' not found, skipping."
 fi
 
+# Backup swaylock PAM configuration
+if [ -f "/etc/pam.d/swaylock" ]; then
+    echo "Backing up swaylock PAM config..."
+    cp "/etc/pam.d/swaylock" "$BACKUP_CONFIG_DIR/swaylock.pam"
+else
+    echo "Warning: /etc/pam.d/swaylock not found, skipping."
+fi
+
+# Backup modem steps file
+if [ -f "$HOME/stepForModem.txt" ]; then
+    echo "Backing up modem steps..."
+    cp "$HOME/stepForModem.txt" "$DOTFILES_DIR/stepForModem.txt"
+else
+    echo "Warning: ~/stepForModem.txt not found, skipping."
+fi
+
+# Backup custom TrackPoint scroll/click mapper service
+if [ -f "$HOME/trackpoint_space_scroll.py" ]; then
+    echo "Backing up TrackPoint scroll/click script..."
+    cp "$HOME/trackpoint_space_scroll.py" "$DOTFILES_DIR/trackpoint_space_scroll.py"
+fi
+
+if [ -f "/etc/systemd/system/trackpoint-scroll.service" ]; then
+    echo "Backing up trackpoint-scroll systemd service..."
+    cp "/etc/systemd/system/trackpoint-scroll.service" "$DOTFILES_DIR/trackpoint-scroll.service"
+fi
+
+# Export list of manually installed packages
+if command -v apt-mark &>/dev/null; then
+    echo "Exporting list of manually installed APT packages..."
+    apt-mark showmanual > "$DOTFILES_DIR/apt_packages.txt"
+fi
+
 echo "=========================================="
 echo " Backup Completed successfully!"
 echo " Files saved to: $DOTFILES_DIR"
