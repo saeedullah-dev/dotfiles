@@ -102,6 +102,7 @@ PACKAGES=(
     nwg-displays
     rofi
     ghostty
+    alacritty
     
     # File Manager
     thunar
