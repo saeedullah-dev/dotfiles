@@ -14,14 +14,10 @@
 
 ---
 
-## 📸 Desktop Preview
+## 📸 Showcase Preview
 
 <div align="center">
-  <h3>✨ The Workspace</h3>
-  <img src="screenshots/desktop_preview.png" alt="Sway Desktop Preview" width="85%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"/>
-  <br/><br/>
-  <h3>💻 Terminal & Interface</h3>
-  <img src="screenshots/terminal_preview.png" alt="Terminal and Split Layout Preview" width="85%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"/>
+  <img src="screenshots/desktop_preview.png" alt="Sway Desktop Showcase" width="90%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"/>
 </div>
 
 ---
