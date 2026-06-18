@@ -19,5 +19,5 @@ exec_always --no-startup-id wl-paste --watch cliphist store
 exec_always --no-startup-id wl-paste --watch pkill -U $USER -x -RTMIN+9 waybar
 
 # Rofi dynamic wallpaper theme matching
-exec_always --no-startup-id ~/.config/rofi/generate_theme.py
+exec_always --no-startup-id /home/saeedul/.config/rofi/generate_theme.py
 

@@ -13,4 +13,4 @@ configuration{
     sidebar-mode: true;
 }
 
-@theme "wallpaper"
+@theme "/home/saeedul/.config/rofi/wallpaper.rasi"

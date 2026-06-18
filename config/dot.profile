@@ -28,7 +28,7 @@ fi
 
 
 # Added by Antigravity CLI installer
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="/home/saeedul/.local/bin:$PATH"
 
 # Wayland & Sway Session Environment Variables
 export XDG_CURRENT_DESKTOP=sway

@@ -67,6 +67,7 @@ HOME_FILES=(
     ".gtkrc-2.0"
     ".xsettingsd"
     ".profile"
+    ".gitconfig"
 )
 
 for file in "${HOME_FILES[@]}"; do

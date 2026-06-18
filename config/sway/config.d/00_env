@@ -17,9 +17,9 @@ xwayland enable
 set $mod Mod1
 set $term ghostty
 set $font JetBrainsMono Nerd Font 11
-set $bin $HOME/bin/sway
+set $bin /home/saeedul/bin/sway
 set $wallpaper ~/.config/sway/wallpaper.png
-set $screenshots ~/Pictures/screenshots
+set $screenshots /home/saeedul/Pictures/screenshots
 set $lock ~/.config/sway/lock-wrapper.sh
 set $menu rofi -show run
 set $appmenu rofi -show drun
