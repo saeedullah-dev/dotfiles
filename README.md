@@ -41,9 +41,8 @@ To replicate this exact environment on a fresh installation of Ubuntu (or other 
     ```
 
 ### What the installer does:
-1.  Adds the **ButterRepo** APT repository (for swayosd, rofi-wayland, ghostty, etc.).
-2.  Installs all required **Apt Packages** (WM core, audio controllers, python binders, build tools).
-3.  Downloads and installs **JetBrainsMono** and other **Nerd Fonts** into `~/.local/share/fonts`.
-4.  Clones and compiles the **Orchis Theme** and **Colloid Icons**.
-5.  **Copies configurations** into `~/.config` and `~` (backing up any pre-existing configs to `.bak.<timestamp>`).
-6.  Sets up standard **Symlinks** and background services.
+1.  Installs all required **Apt Packages** natively from official repositories (Sway core, Ghostty, SwayOSD, autotiling, audio controllers, python binders, build tools).
+2.  Downloads and installs **JetBrainsMono** and other **Nerd Fonts** into `~/.local/share/fonts`.
+3.  Clones and compiles the **Orchis Theme** and **Colloid Icons**.
+4.  **Copies configurations** into `~/.config` and `~` (backing up any pre-existing configs to `.bak.<timestamp>`).
+5.  Sets up standard **Symlinks** and background services.
