@@ -54,7 +54,7 @@ def get_wallpaper_path():
             return path
 
     # 2. Check sway env config
-    sway_env_path = "/home/saeedul/.config/sway/config.d/00_env"
+    sway_env_path = os.path.expanduser("~/.config/sway/config.d/00_env")
     if os.path.exists(sway_env_path):
         try:
             with open(sway_env_path, "r") as f:
@@ -62,7 +62,7 @@ def get_wallpaper_path():
             # Match set $wallpaper <path>
             match = re.search(r"^\s*set\s+\$wallpaper\s+(\S+)", content, re.MULTILINE)
             if match:
-                path = match.group(1).replace("~", "/home/saeedul")
+                path = os.path.expanduser(match.group(1))
                 if os.path.exists(path):
                     return path
         except Exception as e:
@@ -70,14 +70,15 @@ def get_wallpaper_path():
 
     # 3. Fallbacks
     fallbacks = [
-        "/home/saeedul/.config/sway/wallpaper.png",
-        "/home/saeedul/.config/sway/hong5.png",
-        "/home/saeedul/.config/sway/hong3.png",
-        "/home/saeedul/.config/sway/hong4.png"
+        "~/.config/sway/wallpaper.png",
+        "~/.config/sway/hong5.png",
+        "~/.config/sway/hong3.png",
+        "~/.config/sway/hong4.png"
     ]
     for p in fallbacks:
-        if os.path.exists(p):
-            return p
+        expanded = os.path.expanduser(p)
+        if os.path.exists(expanded):
+            return expanded
 
     return None
 
@@ -158,7 +159,7 @@ def main():
             accent2_adjusted = accent2
 
     # Save wallpaper-colors.rasi
-    rofi_dir = "/home/saeedul/.config/rofi"
+    rofi_dir = os.path.expanduser("~/.config/rofi")
     os.makedirs(rofi_dir, exist_ok=True)
     
     colors_file = os.path.join(rofi_dir, "wallpaper-colors.rasi")
@@ -179,7 +180,7 @@ def main():
     print(f"Saved wallpaper colors to {colors_file}")
     # Generate wallpaper.rasi (layout file that imports colors)
     layout_file = os.path.join(rofi_dir, "wallpaper.rasi")
-    layout_content = """@import "/home/saeedul/.config/rofi/wallpaper-colors.rasi"
+    layout_content = """@import "wallpaper-colors.rasi"
 
 * {
     width: 750;
@@ -301,13 +302,13 @@ textbox {
         theme_replaced = False
         for line in lines:
             if line.strip().startswith("@theme"):
-                new_lines.append('@theme "/home/saeedul/.config/rofi/wallpaper.rasi"\n')
+                new_lines.append('@theme "wallpaper"\n')
                 theme_replaced = True
             else:
                 new_lines.append(line)
         
         if not theme_replaced:
-            new_lines.append('\n@theme "/home/saeedul/.config/rofi/wallpaper.rasi"\n')
+            new_lines.append('\n@theme "wallpaper"\n')
             
         with open(config_file, "w") as f:
             f.writelines(new_lines)
@@ -331,7 +332,7 @@ textbox {
     sidebar-mode: true;
 }
 
-@theme "/home/saeedul/.config/rofi/wallpaper.rasi"
+@theme "wallpaper"
 """)
         print(f"Created new {config_file}")
 

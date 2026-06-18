@@ -29,7 +29,7 @@ if [ "$EUID" -eq 0 ]; then
     error "Do not run this script as root/sudo directly. Run it as a normal user. The script will ask for sudo when installing packages."
 fi
 
-clear
+clear || true
 echo -e "${BLUE}"
 echo "============================================================"
 echo "    Sway WM Setup Restoration & Installer Script"
@@ -312,6 +312,22 @@ for file in "${HOME_FILES[@]}"; do
         fi
         msg "Restoring home file: ~/$file"
         cp "$SRC" "$DEST"
+    fi
+done
+
+# 6.5. Update hardcoded home directory paths for portability
+msg "Fixing hardcoded home paths in restored configurations..."
+find "$HOME/.config" -type f -exec grep -l "/home/saeedul" {} + | while read -r file; do
+    # Only run sed on text files to avoid corrupting binaries (like wallpapers)
+    if file "$file" | grep -q "text"; then
+        sed -i "s|/home/saeedul|$HOME|g" "$file"
+    fi
+done
+# Also fix files restored directly in home directory
+for file in "${HOME_FILES[@]}"; do
+    DEST="$HOME/$file"
+    if [ -f "$DEST" ]; then
+        sed -i "s|/home/saeedul|$HOME|g" "$DEST"
     fi
 done
 

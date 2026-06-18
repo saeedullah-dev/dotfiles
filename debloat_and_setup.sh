@@ -21,7 +21,7 @@ if [ "$EUID" -eq 0 ]; then
     error "Do not run this script as root/sudo directly. Run it as a normal user. The script will ask for sudo when needed."
 fi
 
-clear
+clear || true
 echo -e "${BLUE}"
 echo "============================================================"
 echo "    Ubuntu Debloat: GNOME & Snap Removal + Sway Setup"

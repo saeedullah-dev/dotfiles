@@ -27,7 +27,7 @@ gtk-single-instance = desktop
 gtk-titlebar = false
 gtk-tabs-location = top
 gtk-wide-tabs = false
-gtk-custom-css = /home/saeedul/.config/ghostty/style.css
+gtk-custom-css = ~/.config/ghostty/style.css
 window-show-tab-bar = auto
 
 # Keybinds - Splits
