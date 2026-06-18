@@ -40,19 +40,9 @@ read -p "Begin restoration of your desktop setup? (y/n): " -n 1 -r
 echo
 [[ ! $REPLY =~ ^[Yy]$ ]] && { msg "Installation cancelled."; exit 0; }
 
-# 1. Add ButterRepo (Required for swayosd, autotiling, etc.)
-msg "Adding ButterRepo APT repository..."
+# 1. Update package lists
+msg "Updating package lists..."
 sudo apt-get update
-sudo apt-get install -y curl gnupg wget
-
-if [ ! -f /etc/apt/sources.list.d/butterrepo.list ] || [ ! -f /usr/share/keyrings/butterrepo.gpg ]; then
-    curl -fsSL https://justaguylinux.codeberg.page/butterrepo/key.asc | sudo gpg --dearmor -o /usr/share/keyrings/butterrepo.gpg
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/butterrepo.gpg] https://justaguylinux.codeberg.page/butterrepo stable main" | sudo tee /etc/apt/sources.list.d/butterrepo.list
-    sudo apt-get update
-    success "ButterRepo added successfully."
-else
-    msg "ButterRepo is already configured."
-fi
 
 # 2. Package list compilation
 PACKAGES=(
@@ -71,6 +61,7 @@ PACKAGES=(
     foot
     sway-notification-center
     autotiling
+    swayosd
     grim
     slurp
     wl-clipboard
