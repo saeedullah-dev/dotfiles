@@ -6,7 +6,7 @@
 input type:keyboard {
     repeat_delay 180
     repeat_rate 90
-    xkb_options "caps:escape"
+#    xkb_options "caps:escape"
 }
 
 # Disable Touch Screen

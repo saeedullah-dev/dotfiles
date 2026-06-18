@@ -1,7 +1,7 @@
 import evdev
 from evdev import ecodes, InputDevice, UInput, list_devices
-import asyncio
 import sys
+import select
 
 # Target device names
 KEYBOARD_NAME = "AT Translated Set 2 keyboard"
@@ -62,123 +62,121 @@ NAV_MAP = {
     ecodes.KEY_L: ecodes.KEY_RIGHT
 }
 
-async def handle_keyboard():
+def handle_keyboard_event(event):
     global caps_pressed, caps_used, d_pressed, accumulated_hi_res_x, accumulated_hi_res_y
-    async for event in keyboard.async_read_loop():
-        if event.type == ecodes.EV_KEY:
-            # 1. Handle Caps Lock navigation / modifier
-            if event.code == ecodes.KEY_CAPSLOCK:
-                if event.value == 1:  # Down
-                    caps_pressed = True
-                    caps_used = False
-                elif event.value == 0:  # Up
-                    caps_pressed = False
-                    d_pressed = False
-                    if not caps_used:
-                        virtual_keyboard.write(ecodes.EV_KEY, ecodes.KEY_ESC, 1)
-                        virtual_keyboard.write(ecodes.EV_KEY, ecodes.KEY_ESC, 0)
-                        virtual_keyboard.syn()
-                continue
-
-            # If Caps Lock is currently held down
-            if caps_pressed:
-                # D = Trackpoint scroll modifier
-                if event.code == ecodes.KEY_D:
-                    caps_used = True
-                    if event.value == 1:  # Down
-                        d_pressed = True
-                        accumulated_hi_res_x = 0
-                        accumulated_hi_res_y = 0
-                    elif event.value == 0:  # Up
-                        d_pressed = False
-                    continue
-
-                # S = Left Mouse Click
-                if event.code == ecodes.KEY_S:
-                    caps_used = True
-                    if event.value == 1:  # Down
-                        virtual_mouse.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 1)
-                    elif event.value == 0:  # Up
-                        virtual_mouse.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 0)
-                    virtual_mouse.syn()
-                    continue
-
-                # F = Right Mouse Click
-                if event.code == ecodes.KEY_F:
-                    caps_used = True
-                    if event.value == 1:  # Down
-                        virtual_mouse.write(ecodes.EV_KEY, ecodes.BTN_RIGHT, 1)
-                    elif event.value == 0:  # Up
-                        virtual_mouse.write(ecodes.EV_KEY, ecodes.BTN_RIGHT, 0)
-                    virtual_mouse.syn()
-                    continue
-
-                # Normal HJKL to Arrow keys
-                if event.code in NAV_MAP:
-                    mapped_code = NAV_MAP[event.code]
-                    virtual_keyboard.write(ecodes.EV_KEY, mapped_code, event.value)
+    if event.type == ecodes.EV_KEY:
+        # 1. Handle Caps Lock navigation / modifier
+        if event.code == ecodes.KEY_CAPSLOCK:
+            if event.value == 1:  # Down
+                caps_pressed = True
+                caps_used = False
+            elif event.value == 0:  # Up
+                caps_pressed = False
+                d_pressed = False
+                if not caps_used:
+                    virtual_keyboard.write(ecodes.EV_KEY, ecodes.KEY_ESC, 1)
+                    virtual_keyboard.write(ecodes.EV_KEY, ecodes.KEY_ESC, 0)
                     virtual_keyboard.syn()
-                    caps_used = True
-                    continue
+            return
 
-            # Forward other keys normally
-            virtual_keyboard.write(event.type, event.code, event.value)
-            virtual_keyboard.syn()
-        else:
-            virtual_keyboard.write(event.type, event.code, event.value)
-            virtual_keyboard.syn()
+        # If Caps Lock is currently held down
+        if caps_pressed:
+            # D = Trackpoint scroll modifier
+            if event.code == ecodes.KEY_D:
+                caps_used = True
+                if event.value == 1:  # Down
+                    d_pressed = True
+                    accumulated_hi_res_x = 0
+                    accumulated_hi_res_y = 0
+                elif event.value == 0:  # Up
+                    d_pressed = False
+                return
 
-async def handle_trackpoint():
+            # S = Right Mouse Click
+            if event.code == ecodes.KEY_S:
+                caps_used = True
+                virtual_mouse.write(ecodes.EV_KEY, ecodes.BTN_RIGHT, event.value)
+                virtual_mouse.syn()
+                return
+
+            # F = Left Mouse Click
+            if event.code == ecodes.KEY_F:
+                caps_used = True
+                virtual_mouse.write(ecodes.EV_KEY, ecodes.BTN_LEFT, event.value)
+                virtual_mouse.syn()
+                return
+
+            # Normal HJKL to Arrow keys
+            if event.code in NAV_MAP:
+                mapped_code = NAV_MAP[event.code]
+                virtual_keyboard.write(ecodes.EV_KEY, mapped_code, event.value)
+                caps_used = True
+                return
+
+    # Forward other events exactly as they are (including EV_SYN, EV_MSC, etc.)
+    virtual_keyboard.write_event(event)
+
+def handle_trackpoint_event(event):
     global caps_pressed, d_pressed, accumulated_hi_res_x, accumulated_hi_res_y
-    async for event in trackpoint.async_read_loop():
-        # 1. Scroll Emulation Mode (Caps Lock + D is held)
-        if caps_pressed and d_pressed:
-            if event.type == ecodes.EV_REL:
-                # Speed multiplier (adjust this to change scroll sensitivity)
-                HI_RES_MULTIPLIER = 14
+    # 1. Scroll Emulation Mode (Caps Lock + D is held)
+    if caps_pressed and d_pressed:
+        if event.type == ecodes.EV_REL:
+            # Speed multiplier (adjust this to change scroll sensitivity)
+            HI_RES_MULTIPLIER = 14
+            
+            if event.code == ecodes.REL_Y:
+                # Invert Y axis for natural scroll direction
+                delta_y = -event.value * HI_RES_MULTIPLIER
+                accumulated_hi_res_y += delta_y
                 
-                if event.code == ecodes.REL_Y:
-                    # Invert Y axis for natural scroll direction
-                    delta_y = -event.value * HI_RES_MULTIPLIER
-                    accumulated_hi_res_y += delta_y
-                    
-                    # Send high-resolution scroll event (for smooth scrolling)
-                    virtual_mouse.write(ecodes.EV_REL, ecodes.REL_WHEEL_HI_RES, delta_y)
-                    
-                    # Accumulate and send standard wheel events (for legacy app compatibility)
-                    if abs(accumulated_hi_res_y) >= 120:
-                        legacy_ticks = int(accumulated_hi_res_y / 120)
-                        virtual_mouse.write(ecodes.EV_REL, ecodes.REL_WHEEL, legacy_ticks)
-                        accumulated_hi_res_y -= legacy_ticks * 120
-                    
-                    virtual_mouse.syn()
-                    
-                elif event.code == ecodes.REL_X:
-                    delta_x = event.value * HI_RES_MULTIPLIER
-                    accumulated_hi_res_x += delta_x
-                    
-                    # Send high-resolution horizontal scroll event
-                    virtual_mouse.write(ecodes.EV_REL, ecodes.REL_HWHEEL_HI_RES, delta_x)
-                    
-                    # Accumulate and send standard horizontal wheel events
-                    if abs(accumulated_hi_res_x) >= 120:
-                        legacy_ticks = int(accumulated_hi_res_x / 120)
-                        virtual_mouse.write(ecodes.EV_REL, ecodes.REL_HWHEEL, legacy_ticks)
-                        accumulated_hi_res_x -= legacy_ticks * 120
-                    
-                    virtual_mouse.syn()
-        
-        # 2. Normal Pointer Movement (Sends movement, ignores physical Trackpoint buttons)
-        else:
-            if event.type == ecodes.EV_REL:
-                if event.code in (ecodes.REL_X, ecodes.REL_Y):
-                    virtual_mouse.write(ecodes.EV_REL, event.code, event.value)
-                    virtual_mouse.syn()
-            # Note: We completely ignore EV_KEY events (clicks) from the physical Trackpoint!
+                # Send high-resolution scroll event (for smooth scrolling)
+                virtual_mouse.write(ecodes.EV_REL, ecodes.REL_WHEEL_HI_RES, delta_y)
+                
+                # Accumulate and send standard wheel events (for legacy app compatibility)
+                if abs(accumulated_hi_res_y) >= 120:
+                    legacy_ticks = int(accumulated_hi_res_y / 120)
+                    virtual_mouse.write(ecodes.EV_REL, ecodes.REL_WHEEL, legacy_ticks)
+                    accumulated_hi_res_y -= legacy_ticks * 120
+                
+                virtual_mouse.syn()
+                
+            elif event.code == ecodes.REL_X:
+                delta_x = event.value * HI_RES_MULTIPLIER
+                accumulated_hi_res_x += delta_x
+                
+                # Send high-resolution horizontal scroll event
+                virtual_mouse.write(ecodes.EV_REL, ecodes.REL_HWHEEL_HI_RES, delta_x)
+                
+                # Accumulate and send standard horizontal wheel events
+                if abs(accumulated_hi_res_x) >= 120:
+                    legacy_ticks = int(accumulated_hi_res_x / 120)
+                    virtual_mouse.write(ecodes.EV_REL, ecodes.REL_HWHEEL, legacy_ticks)
+                    accumulated_hi_res_x -= legacy_ticks * 120
+                
+                virtual_mouse.syn()
 
-async def main():
+    # 2. Normal Pointer Movement (Sends movement, ignores physical Trackpoint buttons)
+    else:
+        if event.type == ecodes.EV_REL:
+            if event.code in (ecodes.REL_X, ecodes.REL_Y):
+                virtual_mouse.write_event(event)
+        elif event.type == ecodes.EV_SYN:
+            virtual_mouse.write_event(event)
+
+def main():
     try:
-        await asyncio.gather(handle_keyboard(), handle_trackpoint())
+        while True:
+            # Wait for data on either device
+            r, _, _ = select.select([keyboard.fd, trackpoint.fd], [], [])
+            for fd in r:
+                if fd == keyboard.fd:
+                    for event in keyboard.read():
+                        handle_keyboard_event(event)
+                elif fd == trackpoint.fd:
+                    for event in trackpoint.read():
+                        handle_trackpoint_event(event)
+    except KeyboardInterrupt:
+        pass
     finally:
         try:
             keyboard.ungrab()
@@ -190,7 +188,4 @@ async def main():
             pass
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
+    main()

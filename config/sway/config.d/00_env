@@ -15,8 +15,8 @@ xwayland enable
 
 # User Variables
 set $mod Mod1
-set $term alacritty
-set $font JetBrainsMono 11
+set $term ghostty
+set $font JetBrainsMono Nerd Font 11
 set $bin /home/saeedul/bin/sway
 set $wallpaper ~/.config/sway/wallpaper.png
 set $screenshots /home/saeedul/Pictures/screenshots

@@ -1,12 +1,12 @@
 [Unit]
-Description=Trackpoint Scroll Emulation and Key Mapper
+Description=Trackpoint Space Scroll Keyboard Mapping Service
 After=multi-user.target
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /home/saeedul/trackpoint_space_scroll.py
 Restart=always
-RestartSec=2
+RestartSec=5
 User=root
 
 [Install]

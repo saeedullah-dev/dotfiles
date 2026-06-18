@@ -1,12 +1,12 @@
 /* Orchis-style Waybar Stylesheet - Transparent Background with Flat Dark/Orange Text */
 * {
   font-size: 15px;
-  font-family: "GeistMono Nerd Font", "JetBrainsMono Nerd Font", sans-serif;
+  font-family: "JetBrainsMono Nerd Font", "GeistMono Nerd Font", sans-serif;
   font-weight: 500;
 }
 
 window#waybar {
-  background: transparent; /* Keep transparent bar */
+  background: rgba(32, 32, 32, 0.5); /* Matching Matte Black's #202020 at 0.5 opacity */
   color: #e0e0e0; /* Clean light grey text */
   transition-property: background-color;
   transition-duration: 0.5s;

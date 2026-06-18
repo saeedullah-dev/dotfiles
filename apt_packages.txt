@@ -43,6 +43,7 @@ dnsmasq-base
 dracut
 efibootmgr
 eog
+extrepo
 fastfetch
 fd-find
 ffmpeg
@@ -70,6 +71,7 @@ fwupd
 fwupd-signed
 gamemode
 gawk
+gdb
 gedit
 ghostscript
 ghostty
@@ -169,6 +171,7 @@ libreoffice-impress
 libreoffice-math
 libreoffice-style-yaru
 libreoffice-writer
+librewolf
 libsasl2-modules
 libspa-0.2-bluetooth
 libusb-0.1-4
@@ -189,6 +192,7 @@ minicom
 modem-manager-gui
 mpv
 mtools
+nano
 nautilus
 nautilus-sendto
 ncurses-base
@@ -281,6 +285,7 @@ systemd-oomd
 thunar
 thunar-archive-plugin
 thunar-volman
+timeshift
 transmission-gtk
 ubuntu-docs
 ubuntu-drivers-common

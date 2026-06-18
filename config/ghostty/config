@@ -1,17 +1,16 @@
-theme = GitHub Dark
+theme = Matte Black
 
 # Font
-font-family = SauceCodePro Nerd Font Mono
-font-family = Lilex Nerd Font Mono
-font-size = 17
-adjust-cell-height = 10%
-adjust-cell-width = 4%
+font-family = GeistMono Nerd Font
+font-size = 15
+# adjust-cell-height = 10%
+# adjust-cell-width = 4%
 
 # Window
-background-opacity = 0.95
-background-blur = 10
-window-padding-x = 16
-window-padding-y = 16
+background-opacity = 0.5
+background-blur = true
+window-padding-x = 0
+window-padding-y = 0
 window-padding-balance = true
 window-padding-color = background
 unfocused-split-opacity = 0.85
@@ -68,3 +67,7 @@ keybind = alt+0=reset_font_size
 keybind = ctrl+shift+up=jump_to_prompt:-1
 keybind = ctrl+shift+down=jump_to_prompt:1
 keybind = ctrl+alt+r=reload_config
+
+# Cursor Style
+cursor-style = block
+cursor-style-blink = true
