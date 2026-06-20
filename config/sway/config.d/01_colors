@@ -1,0 +1,12 @@
+# Tokyo Night theme colors
+set $bg      #1a1b26
+set $fg      #a9b1d6
+set $black   #16161e
+set $red     #f7768e
+set $green   #9ece6a
+set $yellow  #ff9e64
+set $blue    #7aa2f7
+set $purple  #bb9af7
+set $aqua    #7dcfff
+set $gray    #414868
+

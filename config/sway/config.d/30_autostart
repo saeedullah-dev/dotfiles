@@ -18,6 +18,6 @@ exec_always --no-startup-id pkill swayosd-server; swayosd-server &
 exec_always --no-startup-id wl-paste --watch cliphist store
 exec_always --no-startup-id wl-paste --watch pkill -U $USER -x -RTMIN+9 waybar
 
-# Rofi dynamic wallpaper theme matching
-exec_always --no-startup-id /home/saeedul/.config/rofi/generate_theme.py
+# Rofi dynamic wallpaper theme matching (disabled to preserve Dracula theme)
+# exec_always --no-startup-id /home/saeedul/.config/rofi/generate_theme.py
 

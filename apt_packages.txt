@@ -1,6 +1,5 @@
 acpi
 acpid
-alacritty
 alsa-base
 alsa-utils
 anacron
@@ -49,7 +48,6 @@ fd-find
 ffmpeg
 file-roller
 findutils
-firefox
 flameshot
 fontconfig
 fonts-dejavu-core
@@ -65,7 +63,6 @@ fonts-recommended
 fonts-symbola
 fonts-ubuntu
 foomatic-db-compressed-ppds
-foot
 fuzzel
 fwupd
 fwupd-signed
@@ -117,6 +114,7 @@ guestfs-tools
 gvfs-backends
 gvfs-fuse
 gzip
+helium-bin
 hostname
 hplip
 htop
@@ -171,7 +169,6 @@ libreoffice-impress
 libreoffice-math
 libreoffice-style-yaru
 libreoffice-writer
-librewolf
 libsasl2-modules
 libspa-0.2-bluetooth
 libusb-0.1-4
@@ -238,7 +235,6 @@ printer-driver-ptouch
 printer-driver-pxljr
 printer-driver-sag-gdi
 printer-driver-splix
-ptyxis
 pulseaudio-utils
 pulsemixer
 python3

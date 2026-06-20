@@ -1,3 +1,4 @@
+@import "colors.css";
 /* Orchis-style Waybar Stylesheet - Transparent Background with Flat Dark/Orange Text */
 * {
   font-size: 15px;
@@ -6,8 +7,8 @@
 }
 
 window#waybar {
-  background: rgba(32, 32, 32, 0.5); /* Matching Matte Black's #202020 at 0.5 opacity */
-  color: #e0e0e0; /* Clean light grey text */
+  background: @bg_col; /* Matching Matte Black's #202020 at 0.5 opacity */
+  color: @fg_col; /* Clean light grey text */
   transition-property: background-color;
   transition-duration: 0.5s;
   border-radius: 0px;
@@ -26,7 +27,7 @@ button {
 
 button:hover {
   background: rgba(255, 255, 255, 0.08); /* Clean hover overlay */
-  box-shadow: inset 0 -3px #e67e22; /* Orchis orange underline */
+  box-shadow: inset 0 -3px @selected_col; /* Orchis orange underline */
 }
 
 #workspaces {
@@ -51,14 +52,14 @@ button:hover {
 
 #workspaces button.active,
 #workspaces button.focused {
-  color: #3498db; /* Blue for active workspace */
+  color: @selected_col;
   background: transparent;
   box-shadow: none;
   font-weight: bold;
 }
 
 #workspaces button.urgent {
-  color: #e74c3c; /* Flat red for urgent */
+  color: @urgent_col; /* Flat red for urgent */
   background: transparent;
 }
 
@@ -71,7 +72,7 @@ button:hover {
 
 #mode {
   background-color: rgba(255, 255, 255, 0.1);
-  border-bottom: 3px solid #e67e22;
+  border-bottom: 3px solid @selected_col;
   padding: 0 10px;
 }
 
@@ -93,7 +94,7 @@ button:hover {
 #scratchpad,
 #mpd {
   padding: 0 10px;
-  color: #e0e0e0; /* Clean light grey text */
+  color: @fg_col; /* Clean light grey text */
   background: transparent;
   margin: 0;
 }
@@ -123,28 +124,28 @@ button:hover {
 
 /* Module-specific semantic colors */
 #battery.charging {
-  color: #2ecc71; /* Flat green */
+  color: @green_col; /* Flat green */
 }
 
 #battery.warning:not(.charging) {
-  color: #e67e22; /* Orchis orange */
+  color: @selected_col; /* Orchis orange */
 }
 
 #battery.critical:not(.charging) {
-  color: #e74c3c; /* Flat red */
+  color: @urgent_col; /* Flat red */
 }
 
 #network.disconnected,
 #network.disabled,
 #network.wwan0.disconnected,
 #network.wwan0.disabled {
-  color: #e74c3c;
+  color: @urgent_col;
   padding: 0;
   margin: 0;
 }
 
 #temperature.critical {
-  color: #e74c3c;
+  color: @urgent_col;
 }
 
 #tray {
@@ -158,7 +159,7 @@ button:hover {
 
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
-  background-color: #e74c3c;
+  background-color: @urgent_col;
 }
 
 #idle_inhibitor {
@@ -166,15 +167,15 @@ button:hover {
 }
 
 #idle_inhibitor.activated {
-  color: #e67e22; /* Orchis orange */
+  color: @selected_col; /* Orchis orange */
 }
 
 #mpd {
-  color: #e0e0e0;
+  color: @fg_col;
 }
 
 #mpd.disconnected {
-  color: #e74c3c;
+  color: @urgent_col;
 }
 
 #mpd.stopped {
@@ -182,7 +183,7 @@ button:hover {
 }
 
 #mpd.paused {
-  color: #3498db; /* Flat blue */
+  color: @alt_col; /* Flat blue */
 }
 
 #pulseaudio.muted {
@@ -191,5 +192,5 @@ button:hover {
 
 #bluetooth.disabled,
 #bluetooth.off {
-  color: #e74c3c; /* Flat red when disabled */
+  color: @urgent_col; /* Flat red when disabled */
 }

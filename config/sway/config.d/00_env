@@ -28,17 +28,17 @@ set $clipboard '[ -x "$(command -v cliphist)" ] && cliphist list | wofi --dmenu 
 
 # Wayland Environment Variables (Defined in ~/.profile for global session access)
 
-# Gruvbox Dark Palette
-set $bg      #282828
-set $fg      #ebdbb2
-set $black   #1d2021
-set $red     #cc241d
-set $green   #98971a
-set $yellow  #d79921
-set $blue    #458588
-set $purple  #b16286
-set $aqua    #689d6a
-set $gray    #a89984
+# Tokyo Night Dark Palette
+set $bg      #1a1b26
+set $fg      #a9b1d6
+set $black   #16161e
+set $red     #f7768e
+set $green   #9ece6a
+set $yellow  #ff9e64
+set $blue    #7aa2f7
+set $purple  #bb9af7
+set $aqua    #7dcfff
+set $gray    #414868
 
 # Global font
 font pango:$font

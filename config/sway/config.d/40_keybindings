@@ -22,7 +22,7 @@ mouse_warping output
 
 # Applications
 bindsym $mod+Return exec $term
-bindsym $mod+Shift+Return exec librewolf
+bindsym $mod+Shift+Return exec helium
 bindsym $mod+space exec $menu
 bindsym $mod+Shift+space exec $appmenu
 bindsym $mod+slash exec $bin/touchpad toggle

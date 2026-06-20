@@ -1,24 +1,24 @@
-/* Matte Black tab bar */
+/* Spacegray tab bar style */
 headerbar {
-    background: #121212;
-    border-bottom: 1px solid #262626;
+    background: #16181e;
+    border-bottom: 1px solid #20242d;
 }
 
 tabbar tab {
-    background: #121212;
-    color: #8a8a8d;
+    background: #16181e;
+    color: #7d8fa4;
     border: none;
     padding: 8px 20px;
     margin: 2px 1px;
 }
 
 tabbar tab:selected {
-    background: #333333;
-    color: #eaeaea;
+    background: #20242d;
+    color: #ffffff;
     font-weight: bold;
 }
 
 tabbar tab:hover:not(:selected) {
-    background: #222222;
+    background: #1b1e25;
     color: #ffffff;
 }
