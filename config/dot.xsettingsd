@@ -1,5 +1,5 @@
-Net/ThemeName "Nordic"
-Net/IconThemeName "Colloid-Dark"
+Net/ThemeName "Tokyonight-Dark"
+Net/IconThemeName "Tokyonight-Dark"
 Gtk/FontName "Sans 10"
 Gtk/CursorThemeName "Adwaita"
 Xft/Antialias 1
