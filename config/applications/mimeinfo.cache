@@ -1,0 +1,20 @@
+[MIME Cache]
+application/pdf=google-chrome.desktop;helium.desktop;
+application/rdf+xml=google-chrome.desktop;helium.desktop;
+application/rss+xml=google-chrome.desktop;helium.desktop;
+application/x-zerosize=dev.zed.Zed.desktop;
+application/xhtml+xml=google-chrome.desktop;helium.desktop;
+application/xhtml_xml=google-chrome.desktop;helium.desktop;
+application/xml=google-chrome.desktop;helium.desktop;
+image/gif=google-chrome.desktop;helium.desktop;
+image/jpeg=google-chrome.desktop;helium.desktop;
+image/png=google-chrome.desktop;helium.desktop;
+image/webp=google-chrome.desktop;helium.desktop;
+text/html=google-chrome.desktop;helium.desktop;
+text/plain=dev.zed.Zed.desktop;
+text/xml=google-chrome.desktop;helium.desktop;
+x-scheme-handler/google-chrome=google-chrome.desktop;
+x-scheme-handler/http=google-chrome.desktop;helium.desktop;
+x-scheme-handler/https=google-chrome.desktop;helium.desktop;
+x-scheme-handler/jetbrains=jetbrainsd.desktop;
+x-scheme-handler/zed=dev.zed.Zed.desktop;

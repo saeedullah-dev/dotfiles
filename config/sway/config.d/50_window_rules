@@ -12,9 +12,9 @@ default_border pixel 2
 default_floating_border pixel 2
 
 # Border colors
-client.focused          $blue $blue $fg $yellow $blue
-client.focused_inactive $black $black $gray $gray $black
-client.unfocused        $black $black $gray $gray $black
+client.focused          $blue $blue $bg $yellow $blue
+client.focused_inactive $black $black $fg $gray $black
+client.unfocused        $black $black $fg $gray $black
 client.urgent           $red $red $fg $fg $red
 client.placeholder      $black $black $gray $gray $black
 

@@ -1,0 +1,2 @@
+# Trigger auto_power_profile.sh when AC adapter is plugged in or unplugged
+SUBSYSTEM=="power_supply", ACTION=="change", RUN+="/usr/local/bin/auto_power_profile.sh"

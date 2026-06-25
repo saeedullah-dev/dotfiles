@@ -38,7 +38,7 @@ export QT_QPA_PLATFORMTHEME=qt5ct
 export SDL_VIDEODRIVER="wayland,x11"
 export CLUTTER_BACKEND=wayland
 export ELECTRON_OZONE_PLATFORM_HINT=auto
-export GTK_THEME=Orchis-Orange-Dark
+ export GTK_THEME=Tokyonight-Dark
 
 # Optimize Mesa shader cache size (default is 1G, set to 4G for gaming)
 export MESA_SHADER_CACHE_MAX_SIZE=4G

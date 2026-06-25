@@ -68,6 +68,7 @@ HOME_FILES=(
     ".xsettingsd"
     ".profile"
     ".gitconfig"
+    ".bash_aliases"
 )
 
 for file in "${HOME_FILES[@]}"; do
@@ -82,6 +83,13 @@ for file in "${HOME_FILES[@]}"; do
         echo "Warning: ~/$file does not exist, skipping."
     fi
 done
+
+# Backup local applications desktop entries
+if [ -d "$HOME/.local/share/applications" ]; then
+    echo "Backing up local applications..."
+    rm -rf "$BACKUP_CONFIG_DIR/applications"
+    cp -r "$HOME/.local/share/applications" "$BACKUP_CONFIG_DIR/applications"
+fi
 
 # Backup wallpaper and make it self-contained
 ENV_CONF_SRC="$HOME/.config/sway/config.d/00_env"
@@ -137,10 +145,30 @@ if [ -f "/etc/systemd/system/trackpoint-scroll.service" ]; then
     cp "/etc/systemd/system/trackpoint-scroll.service" "$DOTFILES_DIR/trackpoint-scroll.service"
 fi
 
+# Backup keyd configuration
+if [ -f "/etc/keyd/default.conf" ]; then
+    echo "Backing up keyd configuration..."
+    mkdir -p "$BACKUP_CONFIG_DIR/keyd"
+    cp "/etc/keyd/default.conf" "$BACKUP_CONFIG_DIR/keyd/default.conf"
+fi
+
 # Backup modem sleep wakeup script (iosm-resume)
 if [ -f "/lib/systemd/system-sleep/iosm-resume" ]; then
     echo "Backing up modem sleep/resume script..."
     cp "/lib/systemd/system-sleep/iosm-resume" "$DOTFILES_DIR/iosm-resume"
+fi
+
+# Backup auto power profile script and udev rule
+if [ -f "/usr/local/bin/auto_power_profile.sh" ]; then
+    echo "Backing up auto power profile script..."
+    mkdir -p "$BACKUP_CONFIG_DIR/power"
+    cp "/usr/local/bin/auto_power_profile.sh" "$BACKUP_CONFIG_DIR/power/auto_power_profile.sh"
+fi
+
+if [ -f "/etc/udev/rules.d/99-power-profiles.rules" ]; then
+    echo "Backing up power profiles udev rule..."
+    mkdir -p "$BACKUP_CONFIG_DIR/power"
+    cp "/etc/udev/rules.d/99-power-profiles.rules" "$BACKUP_CONFIG_DIR/power/99-power-profiles.rules"
 fi
 
 # Export list of manually installed packages

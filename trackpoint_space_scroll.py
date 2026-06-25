@@ -2,6 +2,50 @@ import evdev
 from evdev import ecodes, InputDevice, UInput, list_devices
 import sys
 import select
+import fcntl
+from evdev import _uinput
+
+class UInputWithRep(UInput):
+    def __init__(self, events=None, name="py-evdev-uinput", vendor=0x1, product=0x1, version=0x1, bustype=0x3, devnode="/dev/uinput", phys="py-evdev-uinput", input_props=None, max_effects=96):
+        self.name = name
+        self.vendor = vendor
+        self.product = product
+        self.version = version
+        self.bustype = bustype
+        self.phys = phys
+        self.devnode = devnode
+
+        if not events:
+            events = {ecodes.EV_KEY: ecodes.keys.keys()}
+
+        self._verify()
+        self.fd = _uinput.open(devnode)
+
+        # Enable EV_REP (autorepeat) using fcntl.ioctl BEFORE the device is created
+        UI_SET_EVBIT = 0x40045564
+        fcntl.ioctl(self.fd, UI_SET_EVBIT, ecodes.EV_REP)
+
+        absinfo, prepared_events = self._prepare_events(events)
+        _uinput.set_phys(self.fd, phys)
+
+        input_props = input_props or []
+        for prop in input_props:
+            _uinput.set_prop(self.fd, prop)
+
+        # Filter out EV_REP from prepared_events to prevent _uinput.enable from throwing EINVAL
+        prepared_events = [(etype, code) for etype, code in prepared_events if etype != ecodes.EV_REP]
+
+        for etype, code in prepared_events:
+            _uinput.enable(self.fd, etype, code)
+
+        _uinput.setup(self.fd, name, vendor, product, version, bustype, absinfo, max_effects)
+        _uinput.create(self.fd)
+
+        import ctypes
+        self.dll = ctypes.CDLL(_uinput.__file__)
+        self.dll._uinput_begin_upload.restype = ctypes.c_int
+        self.dll._uinput_end_upload.restype = ctypes.c_int
+        self.device = self._find_device(self.fd)
 
 # Target device names
 KEYBOARD_NAME = "AT Translated Set 2 keyboard"
@@ -32,7 +76,7 @@ keyboard = InputDevice(keyboard_path)
 trackpoint = InputDevice(trackpoint_path)
 
 # Create virtual keyboard (always grabbed to manage Caps Lock and mapping keys)
-virtual_keyboard = UInput.from_device(keyboard, name="Virtual Scroll Keyboard")
+virtual_keyboard = UInputWithRep.from_device(keyboard, name="Virtual Scroll Keyboard", vendor=0xabcd, product=0x0123)
 
 # Create virtual mouse (handles cursor movement, smooth scrolling, and mouse buttons)
 mouse_caps = {
