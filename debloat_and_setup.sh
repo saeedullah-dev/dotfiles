@@ -21,6 +21,14 @@ if [ "$EUID" -eq 0 ]; then
     error "Do not run this script as root/sudo directly. Run it as a normal user. The script will ask for sudo when needed."
 fi
 
+# Check if running on Fedora
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    if [[ "$ID" == "fedora" ]]; then
+        error "This debloat script is specific to Ubuntu. For Fedora, please run './install.sh' directly."
+    fi
+fi
+
 clear || true
 echo -e "${BLUE}"
 echo "============================================================"

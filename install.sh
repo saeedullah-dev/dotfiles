@@ -40,128 +40,261 @@ read -p "Begin restoration of your desktop setup? (y/n): " -n 1 -r
 echo
 [[ ! $REPLY =~ ^[Yy]$ ]] && { msg "Installation cancelled."; exit 0; }
 
-# 1. Update package lists
-msg "Updating package lists..."
-sudo apt-get update
+# Detect OS
+OS_ID=""
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS_ID=$ID
+fi
 
-# 2. Package list compilation
-PACKAGES=(
-    # Core Window Manager & Display
-    sway
-    swaybg
-    swayidle
-    swaylock
-    gtklock
-    waybar
-    xwayland
-    build-essential
-    lxpolkit
+if [[ "$OS_ID" == "fedora" ]]; then
+    msg "Fedora detected. Preparing Fedora package installation..."
     
-    # Sway Utilities & Services
-    foot
-    sway-notification-center
-    autotiling
-    swayosd
-    grim
-    slurp
-    wl-clipboard
-    cliphist
-    brightnessctl
-    playerctl
-    wlr-randr
-    xdg-desktop-portal-wlr
-    swappy
-    wtype
-    wf-recorder
-    wlsunset
-    jq
-    ffmpeg
+    # Enable COPR repositories
+    msg "Installing dnf copr plugin..."
+    sudo dnf install -y 'dnf-command(copr)'
     
-    # Python support for custom scripts (autonaming, weather, etc.)
-    python3
-    python3-i3ipc
-    python3-requests
-    python3-pil
-    python3-evdev
+    msg "Enabling COPR repositories for SwayNotificationCenter, swayosd, and ghostty..."
+    sudo dnf copr enable -y erikreider/SwayNotificationCenter
+    sudo dnf copr enable -y erikreider/swayosd
+    sudo dnf copr enable -y scottames/ghostty
     
-    # UI Customizations
-    nwg-look
-    xsettingsd
-    network-manager-gnome
-    kanshi
-    eog
-    nwg-displays
-    rofi
-    ghostty
-    alacritty
+    PACKAGES=(
+        # Core Window Manager & Display
+        sway
+        swaybg
+        swayidle
+        swaylock
+        gtklock
+        waybar
+        xwayland
+        gcc
+        gcc-c++
+        make
+        lxpolkit
+        
+        # Sway Utilities & Services
+        foot
+        SwayNotificationCenter
+        autotiling
+        swayosd
+        grim
+        slurp
+        wl-clipboard
+        cliphist
+        brightnessctl
+        playerctl
+        wlr-randr
+        xdg-desktop-portal-wlr
+        swappy
+        wtype
+        wf-recorder
+        wlsunset
+        jq
+        ffmpeg
+        
+        # Python support for custom scripts (autonaming, weather, etc.)
+        python3
+        python3-i3ipc
+        python3-requests
+        python3-pillow
+        python3-evdev
+        
+        # UI Customizations
+        nwg-look
+        xsettingsd
+        network-manager-applet
+        kanshi
+        eog
+        nwg-displays
+        rofi-wayland
+        ghostty
+        alacritty
+        
+        # File Manager
+        Thunar
+        thunar-archive-plugin
+        thunar-volman
+        gvfs
+        gvfs-smb
+        dialog
+        mtools
+        samba-client
+        cifs-utils
+        unzip
+        
+        # Audio Controller
+        pavucontrol
+        pulsemixer
+        pamixer
+        pipewire-utils
+        
+        # Base Fonts
+        fontawesome-fonts
+        google-noto-emoji-color-fonts
+        gdouros-symbola-fonts
+        dejavu-sans-mono-fonts
+        liberation-sans-fonts
+        
+        # Theme Compiling Engines
+        cmake
+        meson
+        ninja-build
+        pkgconfig
+        sassc
+        gtk-murrine-engine
+        gnome-themes-extra
+        
+        # General Utilities
+        htop
+        fastfetch
+        vlc
+        git
+    )
     
-    # File Manager
-    thunar
-    thunar-archive-plugin
-    thunar-volman
-    gvfs-backends
-    dialog
-    mtools
-    smbclient
-    cifs-utils
-    unzip
+    msg "Installing system packages (this might take a few minutes)..."
+    sudo dnf install -y "${PACKAGES[@]}"
     
-    # Audio Controller
-    pavucontrol
-    pulsemixer
-    pamixer
-    pipewire-audio
-    
-    # Base Fonts
-    fonts-recommended
-    fonts-font-awesome
-    fonts-noto-color-emoji
-    fonts-symbola
-    fonts-dejavu-core
-    fonts-liberation
-    fonts-material-design-icons-iconfont
-    
-    # Theme Compiling Engines
-    cmake
-    meson
-    ninja-build
-    pkg-config
-    sassc
-    gtk2-engines-murrine
-    gtk2-engines-pixbuf
-    gnome-themes-extra
-    
-    # General Utilities
-    htop
-    fastfetch
-    vlc
-    git
-)
-
-msg "Installing system packages (this might take a few minutes)..."
-sudo apt-get install -y "${PACKAGES[@]}"
-
-# Restore additional manually installed packages if apt_packages.txt exists
-if [ -f "$SCRIPT_DIR/apt_packages.txt" ]; then
-    msg "Found apt_packages.txt. Restoring additional manual packages..."
-    EXTRA_PACKAGES=()
-    while IFS= read -r pkg || [ -n "$pkg" ]; do
-        # Ignore comments or empty lines
-        [[ -z "$pkg" || "$pkg" =~ ^# ]] && continue
-        # Avoid installing duplicates
-        if [[ ! " ${PACKAGES[@]} " =~ " ${pkg} " ]]; then
-            EXTRA_PACKAGES+=("$pkg")
+    # Restore additional manually installed packages if dnf_packages.txt exists
+    if [ -f "$SCRIPT_DIR/dnf_packages.txt" ]; then
+        msg "Found dnf_packages.txt. Restoring additional manual packages..."
+        EXTRA_PACKAGES=()
+        while IFS= read -r pkg || [ -n "$pkg" ]; do
+            [[ -z "$pkg" || "$pkg" =~ ^# ]] && continue
+            if [[ ! " ${PACKAGES[@]} " =~ " ${pkg} " ]]; then
+                EXTRA_PACKAGES+=("$pkg")
+            fi
+        done < "$SCRIPT_DIR/dnf_packages.txt"
+        
+        if [ ${#EXTRA_PACKAGES[@]} -gt 0 ]; then
+            msg "Installing additional user packages..."
+            sudo dnf install -y "${EXTRA_PACKAGES[@]}" || warn "Some additional packages failed to install."
         fi
-    done < "$SCRIPT_DIR/apt_packages.txt"
+    fi
+else
+    # Fallback to APT (Ubuntu/Debian)
+    msg "Debian/Ubuntu detected (or fallback). Preparing APT package installation..."
+    msg "Updating package lists..."
+    sudo apt-get update
     
-    if [ ${#EXTRA_PACKAGES[@]} -gt 0 ]; then
-        msg "Attempting to install all additional packages at once..."
-        if ! sudo apt-get install -y "${EXTRA_PACKAGES[@]}"; then
-            warn "Bulk installation of additional packages failed. Retrying packages individually..."
-            for pkg in "${EXTRA_PACKAGES[@]}"; do
-                msg "Installing $pkg..."
-                sudo apt-get install -y "$pkg" || warn "Could not install package: $pkg"
-            done
+    PACKAGES=(
+        # Core Window Manager & Display
+        sway
+        swaybg
+        swayidle
+        swaylock
+        gtklock
+        waybar
+        xwayland
+        build-essential
+        lxpolkit
+        
+        # Sway Utilities & Services
+        foot
+        sway-notification-center
+        autotiling
+        swayosd
+        grim
+        slurp
+        wl-clipboard
+        cliphist
+        brightnessctl
+        playerctl
+        wlr-randr
+        xdg-desktop-portal-wlr
+        swappy
+        wtype
+        wf-recorder
+        wlsunset
+        jq
+        ffmpeg
+        
+        # Python support for custom scripts (autonaming, weather, etc.)
+        python3
+        python3-i3ipc
+        python3-requests
+        python3-pil
+        python3-evdev
+        
+        # UI Customizations
+        nwg-look
+        xsettingsd
+        network-manager-gnome
+        kanshi
+        eog
+        nwg-displays
+        rofi
+        ghostty
+        alacritty
+        
+        # File Manager
+        thunar
+        thunar-archive-plugin
+        thunar-volman
+        gvfs-backends
+        dialog
+        mtools
+        smbclient
+        cifs-utils
+        unzip
+        
+        # Audio Controller
+        pavucontrol
+        pulsemixer
+        pamixer
+        pipewire-audio
+        
+        # Base Fonts
+        fonts-recommended
+        fonts-font-awesome
+        fonts-noto-color-emoji
+        fonts-symbola
+        fonts-dejavu-core
+        fonts-liberation
+        fonts-material-design-icons-iconfont
+        
+        # Theme Compiling Engines
+        cmake
+        meson
+        ninja-build
+        pkg-config
+        sassc
+        gtk2-engines-murrine
+        gtk2-engines-pixbuf
+        gnome-themes-extra
+        
+        # General Utilities
+        htop
+        fastfetch
+        vlc
+        git
+    )
+    
+    msg "Installing system packages (this might take a few minutes)..."
+    sudo apt-get install -y "${PACKAGES[@]}"
+    
+    # Restore additional manually installed packages if apt_packages.txt exists
+    if [ -f "$SCRIPT_DIR/apt_packages.txt" ]; then
+        msg "Found apt_packages.txt. Restoring additional manual packages..."
+        EXTRA_PACKAGES=()
+        while IFS= read -r pkg || [ -n "$pkg" ]; do
+            # Ignore comments or empty lines
+            [[ -z "$pkg" || "$pkg" =~ ^# ]] && continue
+            # Avoid installing duplicates
+            if [[ ! " ${PACKAGES[@]} " =~ " ${pkg} " ]]; then
+                EXTRA_PACKAGES+=("$pkg")
+            fi
+        done < "$SCRIPT_DIR/apt_packages.txt"
+        
+        if [ ${#EXTRA_PACKAGES[@]} -gt 0 ]; then
+            msg "Attempting to install all additional packages at once..."
+            if ! sudo apt-get install -y "${EXTRA_PACKAGES[@]}"; then
+                warn "Bulk installation of additional packages failed. Retrying packages individually..."
+                for pkg in "${EXTRA_PACKAGES[@]}"; do
+                    msg "Installing $pkg..."
+                    sudo apt-get install -y "$pkg" || warn "Could not install package: $pkg"
+                done
+            fi
         fi
     fi
 fi
@@ -386,8 +519,13 @@ fi
 IOSM_RESUME_SRC="$SCRIPT_DIR/iosm-resume"
 if [ -f "$IOSM_RESUME_SRC" ]; then
     msg "Restoring iosm-resume sleep script..."
-    sudo cp "$IOSM_RESUME_SRC" /lib/systemd/system-sleep/iosm-resume
-    sudo chmod +x /lib/systemd/system-sleep/iosm-resume
+    SYSTEMD_SLEEP_DIR="/usr/lib/systemd/system-sleep"
+    if [ ! -d "$SYSTEMD_SLEEP_DIR" ]; then
+        SYSTEMD_SLEEP_DIR="/lib/systemd/system-sleep"
+    fi
+    sudo mkdir -p "$SYSTEMD_SLEEP_DIR"
+    sudo cp "$IOSM_RESUME_SRC" "$SYSTEMD_SLEEP_DIR/iosm-resume"
+    sudo chmod +x "$SYSTEMD_SLEEP_DIR/iosm-resume"
     success "Modem sleep/resume hook script restored successfully."
 else
     warn "Modem sleep/resume hook script (iosm-resume) not found, skipping."

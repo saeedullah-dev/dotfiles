@@ -1,4 +1,4 @@
-theme = TokyoNight
+theme = Nord
 
 # Font
 font-family = GeistMono Nerd Font
@@ -7,7 +7,7 @@ font-size = 15
 # adjust-cell-width = 4%
 
 # Window
-background-opacity = 0.5
+background-opacity = 0.9
 background-blur = true
 window-padding-x = 0
 window-padding-y = 0

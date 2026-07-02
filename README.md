@@ -56,9 +56,15 @@ To replicate this desktop environment on a fresh installation of Ubuntu 26.04 or
 git clone https://github.com/saeedullah-dev/dotfiles.git ~/dotfiles && cd ~/dotfiles && chmod +x debloat_and_setup.sh install.sh && ./debloat_and_setup.sh
 ```
 
+For **Fedora**, run `install.sh` directly to install all necessary packages and configurations:
+
+```bash
+git clone https://github.com/saeedullah-dev/dotfiles.git ~/dotfiles && cd ~/dotfiles && chmod +x install.sh && ./install.sh
+```
+
 > [!NOTE]
-> * `debloat_and_setup.sh` will purge GNOME, Snaps, and GDM3, replacing them with a minimal console-only boot to ensure maximum speed.
-> * If you want to keep your current desktop environment and *only* install the dotfiles, run `./install.sh` directly.
+> * `debloat_and_setup.sh` will purge GNOME, Snaps, and GDM3 on Ubuntu/Debian, replacing them with a minimal console-only boot to ensure maximum speed.
+> * If you want to keep your current desktop environment or if you are running on Fedora, run `./install.sh` directly.
 
 ---
 

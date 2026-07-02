@@ -156,6 +156,9 @@ fi
 if [ -f "/lib/systemd/system-sleep/iosm-resume" ]; then
     echo "Backing up modem sleep/resume script..."
     cp "/lib/systemd/system-sleep/iosm-resume" "$DOTFILES_DIR/iosm-resume"
+elif [ -f "/usr/lib/systemd/system-sleep/iosm-resume" ]; then
+    echo "Backing up modem sleep/resume script..."
+    cp "/usr/lib/systemd/system-sleep/iosm-resume" "$DOTFILES_DIR/iosm-resume"
 fi
 
 # Backup auto power profile script and udev rule
@@ -175,6 +178,12 @@ fi
 if command -v apt-mark &>/dev/null; then
     echo "Exporting list of manually installed APT packages..."
     apt-mark showmanual > "$DOTFILES_DIR/apt_packages.txt"
+fi
+
+if command -v dnf &>/dev/null; then
+    echo "Exporting list of manually installed DNF packages..."
+    dnf repoquery --userinstalled --queryformat "%{name}" > "$DOTFILES_DIR/dnf_packages.txt" 2>/dev/null || \
+    dnf history userinstalled | awk 'NR>2 {print $1}' > "$DOTFILES_DIR/dnf_packages.txt"
 fi
 
 echo "=========================================="

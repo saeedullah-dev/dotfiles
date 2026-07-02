@@ -1,12 +1,13 @@
-/* Tokyo Night colors for Rofi */
+/* Nord colors for Rofi */
 *
 {
-    bg-col:        #1a1b26;
-    bg-col-light:  #24283b;
-    selected-col:  #33467c;
-    border-col:    #7aa2f7;
-    blue:          #7aa2f7;
-    fg-col2:       #7dcfff;
-    fg-col:        #a9b1d6;
-    grey:          #565f89;
+    bg-col:        #2e3440;
+    bg-col-light:  #3b4252;
+    selected-col:  #434c5e;
+    border-col:    #81a1c1;
+    blue:          #81a1c1;
+    fg-col2:       #88c0d0;
+    fg-col:        #d8dee9;
+    grey:          #4c566a;
 }
+

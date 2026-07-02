@@ -31,7 +31,7 @@ fi
 export PATH="/home/saeedul/.local/bin:$PATH"
 
 # Wayland & Sway Session Environment Variables
-export XDG_CURRENT_DESKTOP=sway
+export XDG_CURRENT_DESKTOP=dwl
 export MOZ_ENABLE_WAYLAND=1
 export QT_QPA_PLATFORM="wayland;xcb"
 export QT_QPA_PLATFORMTHEME=qt5ct
