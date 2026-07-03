@@ -93,6 +93,7 @@ if [[ "$OS_ID" == "fedora" ]]; then
             git
             htop
             fastfetch
+            python3-evdev
             
             # Audio & Power Utilities
             pavucontrol
