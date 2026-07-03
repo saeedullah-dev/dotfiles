@@ -50,107 +50,166 @@ fi
 if [[ "$OS_ID" == "fedora" ]]; then
     msg "Fedora detected. Preparing Fedora package installation..."
     
-    # Enable COPR repositories
-    msg "Installing dnf copr plugin..."
-    sudo dnf install -y 'dnf-command(copr)'
-    
-    msg "Enabling COPR repositories for SwayNotificationCenter, swayosd, and ghostty..."
-    sudo dnf copr enable -y erikreider/SwayNotificationCenter
-    sudo dnf copr enable -y erikreider/swayosd
-    sudo dnf copr enable -y scottames/ghostty
-    
-    PACKAGES=(
-        # Core Window Manager & Display
-        sway
-        swaybg
-        swayidle
-        swaylock
-        gtklock
-        waybar
-        xwayland
-        gcc
-        gcc-c++
-        make
-        lxpolkit
+    # Prompt for minimal installation
+    read -p "Install minimal package selection? (Sway, Waybar, Rofi, Thunar, Dunst, etc. - no SwayOSD/SwayNC) [y/N]: " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        msg "Minimal installation selected."
+        INSTALL_MINIMAL=true
+    else
+        msg "Full installation selected."
+        INSTALL_MINIMAL=false
+    fi
+
+    if [ "$INSTALL_MINIMAL" = true ]; then
+        PACKAGES=(
+            # Core Window Manager & Display
+            sway
+            swaybg
+            swayidle
+            swaylock
+            waybar
+            xwayland
+            
+            # Notifications (Dunst instead of SwayNC)
+            dunst
+            
+            # Terminal
+            foot
+            
+            # Launcher
+            rofi-wayland
+            
+            # File Manager
+            Thunar
+            thunar-archive-plugin
+            thunar-volman
+            gvfs
+            gvfs-smb
+            
+            # Utilities
+            wl-clipboard
+            jq
+            git
+            htop
+            fastfetch
+            
+            # Audio & Power Utilities
+            pavucontrol
+            pulsemixer
+            pamixer
+            brightnessctl
+            playerctl
+            
+            # Fonts
+            fontawesome-fonts
+            google-noto-emoji-color-fonts
+            dejavu-sans-mono-fonts
+            liberation-sans-fonts
+        )
+    else
+        # Enable COPR repositories
+        msg "Installing dnf copr plugin..."
+        sudo dnf install -y 'dnf-command(copr)'
         
-        # Sway Utilities & Services
-        foot
-        SwayNotificationCenter
-        autotiling
-        swayosd
-        grim
-        slurp
-        wl-clipboard
-        cliphist
-        brightnessctl
-        playerctl
-        wlr-randr
-        xdg-desktop-portal-wlr
-        swappy
-        wtype
-        wf-recorder
-        wlsunset
-        jq
-        ffmpeg
+        msg "Enabling COPR repositories for SwayNotificationCenter, swayosd, and ghostty..."
+        sudo dnf copr enable -y erikreider/SwayNotificationCenter
+        sudo dnf copr enable -y erikreider/swayosd
+        sudo dnf copr enable -y scottames/ghostty
         
-        # Python support for custom scripts (autonaming, weather, etc.)
-        python3
-        python3-i3ipc
-        python3-requests
-        python3-pillow
-        python3-evdev
-        
-        # UI Customizations
-        nwg-look
-        xsettingsd
-        network-manager-applet
-        kanshi
-        eog
-        nwg-displays
-        rofi-wayland
-        ghostty
-        alacritty
-        
-        # File Manager
-        Thunar
-        thunar-archive-plugin
-        thunar-volman
-        gvfs
-        gvfs-smb
-        dialog
-        mtools
-        samba-client
-        cifs-utils
-        unzip
-        
-        # Audio Controller
-        pavucontrol
-        pulsemixer
-        pamixer
-        pipewire-utils
-        
-        # Base Fonts
-        fontawesome-fonts
-        google-noto-emoji-color-fonts
-        gdouros-symbola-fonts
-        dejavu-sans-mono-fonts
-        liberation-sans-fonts
-        
-        # Theme Compiling Engines
-        cmake
-        meson
-        ninja-build
-        pkgconfig
-        sassc
-        gtk-murrine-engine
-        gnome-themes-extra
-        
-        # General Utilities
-        htop
-        fastfetch
-        vlc
-        git
-    )
+        PACKAGES=(
+            # Core Window Manager & Display
+            sway
+            swaybg
+            swayidle
+            swaylock
+            gtklock
+            waybar
+            xwayland
+            gcc
+            gcc-c++
+            make
+            lxpolkit
+            
+            # Sway Utilities & Services
+            foot
+            SwayNotificationCenter
+            autotiling
+            swayosd
+            grim
+            slurp
+            wl-clipboard
+            cliphist
+            brightnessctl
+            playerctl
+            wlr-randr
+            xdg-desktop-portal-wlr
+            swappy
+            wtype
+            wf-recorder
+            wlsunset
+            jq
+            ffmpeg
+            
+            # Python support for custom scripts (autonaming, weather, etc.)
+            python3
+            python3-i3ipc
+            python3-requests
+            python3-pillow
+            python3-evdev
+            
+            # UI Customizations
+            nwg-look
+            xsettingsd
+            network-manager-applet
+            kanshi
+            eog
+            nwg-displays
+            rofi-wayland
+            ghostty
+            alacritty
+            
+            # File Manager
+            Thunar
+            thunar-archive-plugin
+            thunar-volman
+            gvfs
+            gvfs-smb
+            dialog
+            mtools
+            samba-client
+            cifs-utils
+            unzip
+            
+            # Audio Controller
+            pavucontrol
+            pulsemixer
+            pamixer
+            pipewire-utils
+            
+            # Base Fonts
+            fontawesome-fonts
+            google-noto-emoji-color-fonts
+            gdouros-symbola-fonts
+            dejavu-sans-mono-fonts
+            liberation-sans-fonts
+            
+            # Theme Compiling Engines
+            cmake
+            meson
+            ninja-build
+            pkgconfig
+            sassc
+            gtk-murrine-engine
+            gnome-themes-extra
+            
+            # General Utilities
+            htop
+            fastfetch
+            vlc
+            git
+        )
+    fi
     
     msg "Installing system packages (this might take a few minutes)..."
     sudo dnf install -y "${PACKAGES[@]}"
@@ -369,6 +428,7 @@ TIMESTAMP=$(date +%s)
 # Config directories to restore
 CONFIG_DIRS=(
     "alacritty"
+    "dunst"
     "ghostty"
     "gtk-3.0"
     "gtk-4.0"

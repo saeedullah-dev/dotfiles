@@ -17,6 +17,7 @@ mkdir -p "$BACKUP_CONFIG_DIR"
 # List of configuration directories to back up (from ~/.config)
 CONFIG_DIRS=(
     "alacritty"
+    "dunst"
     "ghostty"
     "gtk-3.0"
     "gtk-4.0"
